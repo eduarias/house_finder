@@ -20,7 +20,7 @@ class MongoDBPipeline(object):
         for data in item:
             if not data:
                 raise DropItem("Missing data!")
-        self.collection.update_one({'url': item['url']}, dict(item), upsert=True)
+        self.collection.update({'url': item['url']}, {'$set': dict(item)}, upsert=True)
         logging.debug("Question added to MongoDB database!")
 
         return item
