@@ -8,8 +8,7 @@
 import scrapy
 
 
-
-class IdealistaItem(scrapy.Item):
+class HomeItem(scrapy.Item):
     #Matching variables of every flat to be scrapped
     id_idealista = scrapy.Field()
     update_date = scrapy.Field()
