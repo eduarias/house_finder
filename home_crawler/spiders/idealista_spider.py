@@ -1,5 +1,5 @@
 __author__ = 'Eduardo Arias'
-from idealista.items import IdealistaItem
+from home_crawler.items import HomeItem
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors import LinkExtractor
 from datetime import datetime
@@ -15,7 +15,8 @@ class IdealistaSpider(CrawlSpider):
     # start_urls = ["https://www.idealista.com/venta-viviendas/leganes/el-carrascal/"]
     # start_urls = ['https://www.idealista.com/alquiler-viviendas/madrid/zona-norte/']
 
-    start_urls = ['https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/']
+    start_urls = [
+        'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/']
 
     rules = (
         # Filter all the flats paginated by the website following the pattern indicated
@@ -33,28 +34,18 @@ class IdealistaSpider(CrawlSpider):
             yield response.follow(flat, callback=self.parse_flat)
 
     def parse_flat(self, response):
-        flat = {}
-
-        # Get last url parameter
-        flat['id_idealista'] = list(filter(None, response.url.split('/')))[-1]
-
-        flat['update_date'] = response.xpath("//section[@id='stats']/p/text()").extract()[0]
-
-        flat['url'] = response.url
-
         info_data = response.xpath("//div[@class='info-data']//span/span/text()").extract()
-        flat['price'] = self._clean_int(info_data[0])
-        flat['sqft_m2'] = self._clean_int(info_data[1])
-        flat['rooms'] = self._clean_int(info_data[2])
-
-        flat['address'] = response.xpath("//div[@id='addressPromo']/ul/li/text()").extract()[0]
-
         baths_extract = response.xpath('//*[@id="details"]//li[contains(text(),"baño")]/text()').extract()[0]
-        flat['baths'] = self._clean_int(baths_extract)
 
-        flat['last_updated'] = datetime.now().strftime('%Y-%m-%d')
+        flat = {'id_idealista': list(filter(None, response.url.split('/')))[-1],
+                'update_date': response.xpath("//section[@id='stats']/p/text()").extract()[0],
+                'url': response.url,
+                'price': self._clean_int(info_data[0]), 'sqft_m2': self._clean_int(info_data[1]),
+                'rooms': self._clean_int(info_data[2]),
+                'address': response.xpath("//div[@id='addressPromo']/ul/li/text()").extract()[0],
+                'baths': self._clean_int(baths_extract), 'last_updated': datetime.now().strftime('%Y-%m-%d')}
 
-        yield IdealistaItem(**flat)
+        yield HomeItem(**flat)
 
     @staticmethod
     def _clean_int(text):
