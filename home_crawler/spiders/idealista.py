@@ -1,5 +1,5 @@
 __author__ = 'Eduardo Arias'
-from home_crawler.items import HomeItem
+from home_crawler.items import IdealistaItem
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors import LinkExtractor
 from datetime import datetime
@@ -16,7 +16,8 @@ class IdealistaSpider(CrawlSpider):
     # start_urls = ['https://www.idealista.com/alquiler-viviendas/madrid/zona-norte/']
 
     start_urls = [
-        'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/']
+        'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/',
+    ]
 
     rules = (
         # Filter all the flats paginated by the website following the pattern indicated
@@ -37,6 +38,7 @@ class IdealistaSpider(CrawlSpider):
         info_data = response.xpath('//div[@id="js-head-second"]//ul[@class="feature-container"]/li[@class="feature"]/text()').extract()
 
         flat = {'id_idealista': list(filter(None, response.url.split('/')))[-1],
+                'title': response.xpath("//h1/span/text()").extract()[0].strip(),
                 'update_date': response.xpath("//section[@id='stats']/p/text()").extract()[0],
                 'url': response.url,
                 'price': response.xpath("//div[@class='price']/span[@itemprop='price']").extract()[0],
@@ -46,7 +48,7 @@ class IdealistaSpider(CrawlSpider):
                 'baths': self._clean_int(info_data[2]),
                 'last_updated': datetime.now().strftime('%Y-%m-%d')}
 
-        yield HomeItem(**flat)
+        yield IdealistaItem(**flat)
 
     @staticmethod
     def _clean_int(text):
