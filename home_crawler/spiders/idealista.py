@@ -37,15 +37,30 @@ class IdealistaSpider(CrawlSpider):
     def parse_flat(self, response):
         info_data = response.xpath('//div[@id="js-head-second"]//ul[@class="feature-container"]/li[@class="feature"]/text()').extract()
 
+        baths = self._clean_int(response.xpath(
+            '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]/text()')
+                                .extract()[0])
+
+        try:
+            toilets = self._clean_int(response.xpath(
+                '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "aseo")]/text()')
+                                      .extract()[0])
+        except IndexError:
+            toilets = 0
+
+        baths += toilets
+
         flat = {'id_idealista': list(filter(None, response.url.split('/')))[-1],
                 'title': response.xpath("//h1/span/text()").extract()[0].strip(),
                 'update_date': response.xpath("//section[@id='stats']/p/text()").extract()[0],
                 'url': response.url,
-                'price': response.xpath("//div[@class='price']/span[@itemprop='price']").extract()[0],
-                'sqft_m2': self._clean_int(info_data[0]),
-                'rooms': self._clean_int(info_data[1]),
-                'address': response.xpath("//div[@id='addressPromo']/ul/li/text()").extract()[0],
-                'baths': self._clean_int(info_data[2]),
+                'price': self._clean_int(response.xpath('//p[@class="price"]/text()').extract()[0]),
+                'sqft_m2': self._clean_int(response.xpath('//div[@class="info-data"]/span[2]/span/text()')
+                                           .extract()[0]),
+                'rooms': self._clean_int(response.xpath('//div[@class="info-data"]/span[3]/span/text()')
+                                         .extract()[0]),
+                'address': None,
+                'baths': baths,
                 'last_updated': datetime.now().strftime('%Y-%m-%d')}
 
         yield IdealistaItem(**flat)
