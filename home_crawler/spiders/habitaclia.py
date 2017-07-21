@@ -1,12 +1,11 @@
-__author__ = 'Eduardo Arias'
 from home_crawler.items import HabitacliaItem
-from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.contrib.spiders import Rule
 from scrapy.contrib.linkextractors import LinkExtractor
 from datetime import datetime
-import re
+from home_crawler.spiders.BaseSpider import BaseSpider
 
 
-class HabitacliaSpider(CrawlSpider):
+class HabitacliaSpider(BaseSpider):
     name = "habitaclia"
     allowed_domains = ["habitaclia.com"]
 
@@ -20,8 +19,6 @@ class HabitacliaSpider(CrawlSpider):
         Rule(LinkExtractor(restrict_xpaths=("//a[@class='siguiente']")),
              callback='parse_flat_list',
              follow=True),
-        # Filter all flats
-        # Rule(LinkExtractor(allow=('inmueble\.')), callback='parse_flats', follow=False)
     )
 
     def parse_flat_list(self, response):
@@ -52,11 +49,6 @@ class HabitacliaSpider(CrawlSpider):
                 'last_updated': datetime.now().strftime('%Y-%m-%d')}
 
         yield HabitacliaItem(**flat)
-
-    @staticmethod
-    def _clean_int(text):
-        number = re.sub("[^0-9]", "", text)
-        return int(number)
 
     # Overriding parse_start_url to get the first page
     parse_start_url = parse_flat_list
