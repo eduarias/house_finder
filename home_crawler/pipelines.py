@@ -4,10 +4,10 @@ import pymongo
 from scrapy.conf import settings
 from scrapy.exceptions import DropItem
 import logging
+from datetime import datetime
 
 
 class MongoDBPipeline(object):
-
     def __init__(self):
         connection = pymongo.MongoClient(
             settings['MONGODB_SERVER'],
@@ -17,11 +17,14 @@ class MongoDBPipeline(object):
         self.collection = db[settings['MONGODB_COLLECTION']]
 
     def process_item(self, item, spider):
+        today = datetime.now().strftime('%Y-%m-%d')
         for data in item:
             if not data:
-                raise DropItem("Missing data!")
-        self.collection.update({'url': item['url']}, {'$set': dict(item)}, upsert=True)
-        logging.debug("Question added to MongoDB database!")
+                raise DropItem("Missing data: {}!".format(data))
+        self.collection.update({'url': item['url']},
+                               {'$set': dict(item),
+                                '$setOnInsert': {'found_on': today}},
+                               upsert=True)
+        logging.debug("Home {} added to MongoDB database!".format(item['url']))
 
         return item
-
