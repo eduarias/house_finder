@@ -41,7 +41,7 @@ class HabitacliaSpider(BaseSpider):
                     ),
                 'title': response.xpath('//h1/text()').extract()[0],
                 'update_date': None,
-                'url': response.url,
+                'url': response.url.split('?')[0],
                 'price': self._clean_int(response.xpath("//div[@class='price']/span[@itemprop='price']/text()").extract()[0]),
                 'sqft_m2': self._clean_int(info_data[0]),
                 'rooms': self._clean_int(info_data[1]),
