@@ -1,5 +1,5 @@
 from home_crawler.items import FotocasaItem
-from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.contrib.spiders import Rule
 from scrapy.contrib.linkextractors import LinkExtractor
 from datetime import datetime
 from home_crawler.spiders.BaseSpider import BaseSpider
