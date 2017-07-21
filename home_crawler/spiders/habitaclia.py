@@ -8,6 +8,7 @@ from home_crawler.spiders.BaseSpider import BaseSpider
 class HabitacliaSpider(BaseSpider):
     name = "habitaclia"
     allowed_domains = ["habitaclia.com"]
+    download_delay = 0.5
 
     start_urls = [
         'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___bonanova/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',

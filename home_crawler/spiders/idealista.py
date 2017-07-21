@@ -8,11 +8,7 @@ from home_crawler.spiders.BaseSpider import BaseSpider
 class IdealistaSpider(BaseSpider):
     name = "idealista"
     allowed_domains = ["idealista.com"]
-    ########################################################################
-    ###       Add the url to crawl in the start_urls variable           ###
-    ########################################################################
-    # start_urls = ["https://www.idealista.com/venta-viviendas/leganes/el-carrascal/"]
-    # start_urls = ['https://www.idealista.com/alquiler-viviendas/madrid/zona-norte/']
+    download_delay = 1
 
     start_urls = [
         'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/',

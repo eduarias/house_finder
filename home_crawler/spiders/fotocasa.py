@@ -8,6 +8,7 @@ from home_crawler.spiders.BaseSpider import BaseSpider
 class FotocasaSpider(BaseSpider):
     name = "fotocasa"
     allowed_domains = ["fotocasa.es"]
+    download_delay = 0.5
 
     start_urls = [
         'http://www.fotocasa.es/es/alquiler/casas/barcelona-capital/sarria-sant-gervasi/l',
