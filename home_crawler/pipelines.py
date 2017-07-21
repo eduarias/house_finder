@@ -18,9 +18,13 @@ class MongoDBPipeline(object):
 
     def process_item(self, item, spider):
         today = datetime.now().strftime('%Y-%m-%d')
-        for data in item:
-            if not data:
+
+        # Minimum data scraped to be in DB
+        basic_data = ['price', 'sqft_m2', 'rooms']
+        for data in basic_data:
+            if not item[data]:
                 raise DropItem("Missing data: {}!".format(data))
+
         self.collection.update({'url': item['url']},
                                {'$set': dict(item),
                                 '$setOnInsert': {'found_on': today}},
