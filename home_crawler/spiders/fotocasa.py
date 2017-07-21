@@ -1,12 +1,11 @@
-__author__ = 'Eduardo Arias'
 from home_crawler.items import FotocasaItem
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors import LinkExtractor
 from datetime import datetime
-import re
+from home_crawler.spiders.BaseSpider import BaseSpider
 
 
-class FotocasaSpider(CrawlSpider):
+class FotocasaSpider(BaseSpider):
     name = "fotocasa"
     allowed_domains = ["fotocasa.es"]
 
@@ -54,10 +53,5 @@ class FotocasaSpider(CrawlSpider):
         }
 
         yield FotocasaItem(**flat)
-
-    @staticmethod
-    def _clean_int(text):
-        number = re.sub("[^0-9]", "", text)
-        return int(number)
 
     parse_start_url = parse_flat_list

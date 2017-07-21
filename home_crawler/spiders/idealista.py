@@ -1,12 +1,11 @@
-__author__ = 'Eduardo Arias'
 from home_crawler.items import IdealistaItem
-from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.contrib.spiders import Rule
 from scrapy.contrib.linkextractors import LinkExtractor
 from datetime import datetime
-import re
+from home_crawler.spiders.BaseSpider import BaseSpider
 
 
-class IdealistaSpider(CrawlSpider):
+class IdealistaSpider(BaseSpider):
     name = "idealista"
     allowed_domains = ["idealista.com"]
     ########################################################################
@@ -64,11 +63,6 @@ class IdealistaSpider(CrawlSpider):
                 'last_updated': datetime.now().strftime('%Y-%m-%d')}
 
         yield IdealistaItem(**flat)
-
-    @staticmethod
-    def _clean_int(text):
-        number = re.sub("[^0-9]", "", text)
-        return int(number)
 
     # Overriding parse_start_url to get the first page
     parse_start_url = parse_flat_list
