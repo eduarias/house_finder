@@ -16,7 +16,7 @@ class HabitacliaSpider(BaseSpider):
 
     rules = (
         # Filter all the flats paginated by the website following the pattern indicated
-        Rule(LinkExtractor(restrict_xpaths=("//a[@class='siguiente']")),
+        Rule(LinkExtractor(restrict_xpaths="//a[@class='siguiente']"),
              callback='parse_flat_list',
              follow=True),
     )
@@ -28,25 +28,23 @@ class HabitacliaSpider(BaseSpider):
             yield response.follow(flat, callback=self.parse_flat)
 
     def parse_flat(self, response):
-        info_data = response.xpath('//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature"]/strong/text()').extract()
+        info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature"]/strong/text()'
 
         try:
-            address = response.xpath("//div[@id='addressPromo']/ul/li/text()").extract()[0]
+            address = self.extract_from_xpath(response, "//div[@id='addressPromo']/ul/li/text()")
         except IndexError:
             address = None
 
-        flat = {'site_id': self._clean_int(
-                    response.xpath('//span[@class="detail-id"]/text()').extract()[0]
-                    ),
+        flat = {'site_id': self.extract_from_xpath(response, '//span[@class="detail-id"]/text()'),
                 'website': 'Habitaclia',
-                'title': response.xpath('//h1/text()').extract()[0],
+                'title': self.extract_from_xpath(response, '//h1/text()'),
                 'url': response.url.split('?')[0],
-                'price': self._clean_int(response.xpath("//div[@class='price']/span[@itemprop='price']/text()").extract()[0]),
-                'sqft_m2': self._clean_int(info_data[0]),
-                'rooms': self._clean_int(info_data[1]),
+                'price': self.extract_from_xpath(response, "//div[@class='price']/span[@itemprop='price']/text()"),
+                'sqft_m2': self.extract_from_xpath(response, info_xpath, 0),
+                'rooms': self.extract_from_xpath(response, info_xpath, 1),
                 'address': address,
-                'baths': self._clean_int(info_data[2]),
-        }
+                'baths': self.extract_from_xpath(response, info_xpath, 2),
+                }
 
         yield HomeItem(**flat)
 

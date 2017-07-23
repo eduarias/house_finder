@@ -3,6 +3,7 @@ from scrapy.spiders import Rule
 
 from home_crawler.items import HomeItem
 from home_crawler.spiders.BaseSpider import BaseSpider
+from home_crawler.pipelines import clean_int
 
 
 class IdealistaSpider(BaseSpider):
@@ -16,7 +17,7 @@ class IdealistaSpider(BaseSpider):
 
     rules = (
         # Filter all the flats paginated by the website following the pattern indicated
-        Rule(LinkExtractor(restrict_xpaths=("//a[@class='icon-arrow-right-after']")),
+        Rule(LinkExtractor(restrict_xpaths="//a[@class='icon-arrow-right-after']"),
              callback='parse_flat_list',
              follow=True),
         # Filter all flats
@@ -30,16 +31,13 @@ class IdealistaSpider(BaseSpider):
             yield response.follow(flat, callback=self.parse_flat)
 
     def parse_flat(self, response):
-        info_data = response.xpath('//div[@id="js-head-second"]//ul[@class="feature-container"]/li[@class="feature"]/text()').extract()
 
-        baths = self._clean_int(response.xpath(
-            '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]/text()')
-                                .extract()[0])
+        baths = clean_int(self.extract_from_xpath(response,
+            '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]/text()'))
 
         try:
-            toilets = self._clean_int(response.xpath(
-                '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "aseo")]/text()')
-                                      .extract()[0])
+            toilets = clean_int(self.extract_from_xpath(response,
+                '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "aseo")]/text()'))
         except IndexError:
             toilets = 0
 
@@ -47,14 +45,12 @@ class IdealistaSpider(BaseSpider):
 
         flat = {'site_id': list(filter(None, response.url.split('/')))[-1],
                 'website': 'Idealista',
-                'title': response.xpath("//h1/span/text()").extract()[0].strip(),
-                'article_update_date': response.xpath("//section[@id='stats']/p/text()").extract()[0],
+                'title': self.extract_from_xpath(response, "//h1/span/text()"),
+                'article_update_date': self.extract_from_xpath(response, "//section[@id='stats']/p/text()"),
                 'url': response.url,
-                'price': self._clean_int(response.xpath('//p[@class="price"]/text()').extract()[0]),
-                'sqft_m2': self._clean_int(response.xpath('//div[@class="info-data"]/span[2]/span/text()')
-                                           .extract()[0]),
-                'rooms': self._clean_int(response.xpath('//div[@class="info-data"]/span[3]/span/text()')
-                                         .extract()[0]),
+                'price': self.extract_from_xpath(response, '//p[@class="price"]/text()'),
+                'sqft_m2': self.extract_from_xpath(response, '//div[@class="info-data"]/span[2]/span/text()'),
+                'rooms': self.extract_from_xpath(response, '//div[@class="info-data"]/span[3]/span/text()'),
                 'address': None,
                 'baths': baths,
                 }
