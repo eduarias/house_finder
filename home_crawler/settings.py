@@ -7,6 +7,8 @@
 #
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #
+import os
+import sys
 
 BOT_NAME = 'home_crawler'
 
@@ -16,14 +18,20 @@ NEWSPIDER_MODULE = 'home_crawler.spiders'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'home_crawler (+http://www.yourdomain.com)'
 USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36"
-HTTPCACHE_ENABLED = False
+HTTPCACHE_ENABLED = True
 AUTOTHROTTLE_ENABLED = True
+ROBOTSTXT_OBEY = True
 
-
-ITEM_PIPELINES = {'home_crawler.pipelines.MongoDBPipeline': 100,
+ITEM_PIPELINES = {'home_crawler.pipelines.DjangoPipeline': 100,
                   }
 
-MONGODB_SERVER = "localhost"
-MONGODB_PORT = 27017
-MONGODB_DB = "homes"
-MONGODB_COLLECTION = "home"
+LOG_STDOUT = True
+LOG_FILE = '/tmp/scrapy_output.txt'
+
+DJANGO_PROJECT_PATH = '/home/eduarias/workspace/home_crawler/home_finder'
+DJANGO_SETTINGS_MODULE = 'home_finder.settings'
+
+sys.path.insert(0, DJANGO_PROJECT_PATH)
+os.environ['DJANGO_SETTINGS_MODULE'] = DJANGO_SETTINGS_MODULE
+import django
+django.setup()

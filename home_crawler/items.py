@@ -1,24 +1,11 @@
-# -*- coding: utf-8 -*-
-
-# Define here the models for your scraped items
-#
-# See documentation in:
-# http://doc.scrapy.org/en/latest/topics/items.html
+from scrapy_djangoitem import DjangoItem
+from store_houses.models import Home
 
 import scrapy
 
 
-class HomeItem(scrapy.Item):
-    #Matching variables of every flat to be scrapped
-    title = scrapy.Field()
-    price = scrapy.Field()
-    url = scrapy.Field()
-    address = scrapy.Field()
-    sqft_m2 = scrapy.Field()
-    rooms = scrapy.Field()
-    baths = scrapy.Field()
-    update_date = scrapy.Field()
-    last_updated = scrapy.Field(serializer=str)
+class HomeItem(DjangoItem):
+    django_model = Home
 
 
 class IdealistaItem(HomeItem):

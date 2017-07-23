@@ -1,10 +1,22 @@
 # -*- coding: utf-8 -*-
 
 import pymongo
+from django.db import IntegrityError
 from scrapy.conf import settings
 from scrapy.exceptions import DropItem
 import logging
 from datetime import datetime
+
+
+class DjangoPipeline(object):
+
+    def process_item(self, item, spider):
+        try:
+            item.save()
+            logging.debug("Home {} added to Django database!".format(item['url']))
+        except IntegrityError:
+            logging.info("Url already in database: {}".format(item['url']))
+        return item
 
 
 class MongoDBPipeline(object):
