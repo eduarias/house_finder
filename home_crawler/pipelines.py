@@ -18,8 +18,10 @@ def clean_int(text):
             else:
                 logging.info('Empty text - Original text: {}'.format(text))
                 return None
+        elif isinstance(text, int):
+            return text
     else:
-        return int(text)
+        return None
 
 
 class HomeBasePipeline(object):

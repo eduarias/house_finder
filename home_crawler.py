@@ -3,7 +3,7 @@ from scrapy.utils.project import get_project_settings
 
 process = CrawlerProcess(get_project_settings())
 
-#process.crawl('idealista')
+process.crawl('idealista')
 process.crawl('fotocasa')
-#process.crawl('habitaclia')
+process.crawl('habitaclia')
 process.start()

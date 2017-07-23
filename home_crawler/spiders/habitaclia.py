@@ -2,6 +2,7 @@ from home_crawler.items import HomeItem
 from scrapy.spiders import Rule
 from scrapy.linkextractors import LinkExtractor
 from home_crawler.spiders.BaseSpider import BaseSpider
+from home_crawler.pipelines import clean_int
 
 
 class HabitacliaSpider(BaseSpider):
@@ -35,7 +36,7 @@ class HabitacliaSpider(BaseSpider):
         except IndexError:
             address = None
 
-        flat = {'site_id': self.extract_from_xpath(response, '//span[@class="detail-id"]/text()'),
+        flat = {'site_id': clean_int(self.extract_from_xpath(response, '//span[@class="detail-id"]/text()')),
                 'website': 'Habitaclia',
                 'title': self.extract_from_xpath(response, '//h1/text()'),
                 'url': response.url.split('?')[0],
