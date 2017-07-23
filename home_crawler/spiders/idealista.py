@@ -9,7 +9,7 @@ from home_crawler.pipelines import clean_int
 class IdealistaSpider(BaseSpider):
     name = "idealista"
     allowed_domains = ["idealista.com"]
-    download_delay = 1
+    download_delay = 3
 
     start_urls = [
         'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/',
@@ -41,7 +41,8 @@ class IdealistaSpider(BaseSpider):
         except IndexError:
             toilets = 0
 
-        baths += toilets
+        if toilets:
+            baths += toilets
 
         flat = {'site_id': list(filter(None, response.url.split('/')))[-1],
                 'website': 'Idealista',

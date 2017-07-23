@@ -6,7 +6,7 @@ class BaseSpider(CrawlSpider):
     @staticmethod
     def extract_from_xpath(response, xpath, index=0):
         values = response.xpath(xpath).extract()
-        if values:
+        try:
             return values[index]
-        else:
+        except IndexError:
             return None
