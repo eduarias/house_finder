@@ -1,7 +1,7 @@
-from home_crawler.items import IdealistaItem
-from scrapy.contrib.spiders import Rule
-from scrapy.contrib.linkextractors import LinkExtractor
-from datetime import datetime
+from scrapy.linkextractors import LinkExtractor
+from scrapy.spiders import Rule
+
+from home_crawler.items import HomeItem
 from home_crawler.spiders.BaseSpider import BaseSpider
 
 
@@ -45,9 +45,10 @@ class IdealistaSpider(BaseSpider):
 
         baths += toilets
 
-        flat = {'id_idealista': list(filter(None, response.url.split('/')))[-1],
+        flat = {'site_id': list(filter(None, response.url.split('/')))[-1],
+                'website': 'Idealista',
                 'title': response.xpath("//h1/span/text()").extract()[0].strip(),
-                'update_date': response.xpath("//section[@id='stats']/p/text()").extract()[0],
+                'article_update_date': response.xpath("//section[@id='stats']/p/text()").extract()[0],
                 'url': response.url,
                 'price': self._clean_int(response.xpath('//p[@class="price"]/text()').extract()[0]),
                 'sqft_m2': self._clean_int(response.xpath('//div[@class="info-data"]/span[2]/span/text()')
@@ -56,9 +57,9 @@ class IdealistaSpider(BaseSpider):
                                          .extract()[0]),
                 'address': None,
                 'baths': baths,
-                'last_updated': datetime.now().strftime('%Y-%m-%d')}
+                }
 
-        yield IdealistaItem(**flat)
+        yield HomeItem(**flat)
 
     # Overriding parse_start_url to get the first page
     parse_start_url = parse_flat_list

@@ -1,7 +1,6 @@
-from home_crawler.items import HabitacliaItem
-from scrapy.contrib.spiders import Rule
-from scrapy.contrib.linkextractors import LinkExtractor
-from datetime import datetime
+from home_crawler.items import HomeItem
+from scrapy.spiders import Rule
+from scrapy.linkextractors import LinkExtractor
 from home_crawler.spiders.BaseSpider import BaseSpider
 
 
@@ -36,20 +35,19 @@ class HabitacliaSpider(BaseSpider):
         except IndexError:
             address = None
 
-        flat = {'id_habitaclia': self._clean_int(
+        flat = {'site_id': self._clean_int(
                     response.xpath('//span[@class="detail-id"]/text()').extract()[0]
                     ),
+                'website': 'Habitaclia',
                 'title': response.xpath('//h1/text()').extract()[0],
-                'update_date': None,
                 'url': response.url.split('?')[0],
                 'price': self._clean_int(response.xpath("//div[@class='price']/span[@itemprop='price']/text()").extract()[0]),
                 'sqft_m2': self._clean_int(info_data[0]),
                 'rooms': self._clean_int(info_data[1]),
                 'address': address,
                 'baths': self._clean_int(info_data[2]),
-                'last_updated': datetime.now().strftime('%Y-%m-%d')}
+        }
 
-        yield HabitacliaItem(**flat)
+        yield HomeItem(**flat)
 
-    # Overriding parse_start_url to get the first page
     parse_start_url = parse_flat_list

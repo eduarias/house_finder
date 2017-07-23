@@ -1,7 +1,6 @@
-from home_crawler.items import FotocasaItem
-from scrapy.contrib.spiders import Rule
-from scrapy.contrib.linkextractors import LinkExtractor
-from datetime import datetime
+from home_crawler.items import HomeItem
+from scrapy.spiders import Rule
+from scrapy.linkextractors import LinkExtractor
 from home_crawler.spiders.BaseSpider import BaseSpider
 
 
@@ -26,18 +25,18 @@ class FotocasaSpider(BaseSpider):
     def parse_flat_list(self, response):
         flats = response.xpath('//div[@class="re-Searchresult"]')
 
-        for flat in flats.xpath('//a[@class="re-Searchresult-itemRow"]'):
+        for flat in flats.xpath('//a[@class="re-Searchresult-item"]'):
             yield response.follow(flat, callback=self.parse_flat)
 
     def parse_flat(self, response):
 
-        flat = {'id_fotocasa': self._clean_int(
+        flat = {'site_id': self._clean_int(
                     response.xpath('//div[@id="detailReference"]/text()').extract()[0]
                     ),
+                'website': 'Fotocasa',
                 'title': response.xpath('//h1[@class="property-title"]/text()').extract()[0],
-                'update_date': None,
                 'url': response.url,
-                'price':self._clean_int(
+                'price': self._clean_int(
                     response.xpath('//span[@id="detail-quickaccess_property_price"]/b/text()').extract()[0]
                     ),
                 'sqft_m2': self._clean_int(
@@ -50,9 +49,8 @@ class FotocasaSpider(BaseSpider):
                     response.xpath('//*[@id="litBaths"]//text()').extract()[0]
                     ),
                 'address': response.xpath("//div[@class='detail-section-content']/text()").extract()[0],
-                'last_updated': datetime.now().strftime('%Y-%m-%d')
         }
 
-        yield FotocasaItem(**flat)
+        yield HomeItem(**flat)
 
     parse_start_url = parse_flat_list
