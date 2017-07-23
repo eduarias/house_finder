@@ -1,10 +1,12 @@
 from scrapy.spiders import CrawlSpider
-import re
 
 
 class BaseSpider(CrawlSpider):
 
     @staticmethod
-    def _clean_int(text):
-        number = re.sub("[^0-9]", "", text)
-        return int(number)
+    def extract_from_xpath(response, xpath, index=0):
+        values = response.xpath(xpath).extract()
+        if values:
+            return values[index]
+        else:
+            return None
