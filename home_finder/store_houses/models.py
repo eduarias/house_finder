@@ -11,12 +11,12 @@ class Home(models.Model):
     sqft_m2 = models.IntegerField()
     rooms = models.IntegerField()
     baths = models.IntegerField()
-    found_on = models.DateField(auto_now_add=True)
-    last_update = models.DateField(auto_now=True)
     article_update_date = models.CharField(max_length=100)
     is_interesting = models.BooleanField(default=False)
     is_discard = models.BooleanField(default=False)
     has_seen = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ('site_id', 'website',)

@@ -6,13 +6,15 @@ from home_crawler.pipelines import clean_int
 
 
 class HabitacliaSpider(BaseSpider):
+
     name = "habitaclia"
     allowed_domains = ["habitaclia.com"]
     download_delay = 0.5
 
-    xpath_list = '//ul[@class="enlista"]/li'
-    xpath_list_item = '//a[@itemprop="name"]'
-    xpath_list_item_price = '//span[@itemprop="price"]'
+    xpath_list = '//ul[@class="enlista"]'
+    xpath_list_item = './/li[@data-id]'
+    xpath_list_item_href = './/a[@itemprop="name"]/@href'
+    xpath_list_item_price = './/span[@itemprop="price"]/text()'
 
     start_urls = [
         'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___bonanova/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',
@@ -34,11 +36,11 @@ class HabitacliaSpider(BaseSpider):
         except IndexError:
             address = None
 
-        flat = {'site_id': clean_int(self.extract_from_xpath(response, '//span[@class="detail-id"]/text()')),
+        flat = {'site_id': clean_int(response.xpath('//span[@class="detail-id"]/text()').extract_first()),
                 'website': 'Habitaclia',
-                'title': self.extract_from_xpath(response, '//h1/text()'),
+                'title': response.xpath('//h1/text()').extract_first(),
                 'url': response.url.split('?')[0],
-                'price': self.extract_from_xpath(response, "//div[@class='price']/span[@itemprop='price']/text()"),
+                'price': response.xpath("//div[@class='price']/span[@itemprop='price']/text()").extract_first(),
                 'sqft_m2': self.extract_from_xpath(response, info_xpath, 0),
                 'rooms': self.extract_from_xpath(response, info_xpath, 1),
                 'address': address,
@@ -47,4 +49,5 @@ class HabitacliaSpider(BaseSpider):
 
         yield HomeItem(**flat)
 
-
+    def get_url(self, response, url):
+        return url.split('?')[0]
