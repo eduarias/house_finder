@@ -34,7 +34,7 @@ class HomeBasePipeline(object):
         if item['address']:
             item['address'] = item['address'].strip()
 
-        self.post_process_item(item, spider)
+        return self.post_process_item(item, spider)
 
     @abstractmethod
     def post_process_item(self, item, spider):
@@ -52,7 +52,7 @@ class DjangoPipeline(HomeBasePipeline):
         return item
 
 
-class MongoDBPipeline(object):
+class MongoDBPipeline(HomeBasePipeline):
     def __init__(self):
         connection = pymongo.MongoClient(
             settings['MONGODB_SERVER'],
