@@ -88,7 +88,7 @@ class MongoDBPipeline(HomeBasePipeline):
         self.collection = db[settings['MONGODB_COLLECTION']]
 
     def post_process_item(self, item, spider):
-        today = datetime.now().strftime('%Y-%m-%d')
+        today = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         # Minimum data scraped to be in DB
         basic_data = ['price', 'sqft_m2', 'rooms']
@@ -96,9 +96,12 @@ class MongoDBPipeline(HomeBasePipeline):
             if not item[data]:
                 raise DropItem("Missing data: {}!".format(data))
 
+        item_to_db = dict(item)
+        item_to_db['updated_at'] = today
+
         self.collection.update({'url': item['url']},
-                               {'$set': dict(item),
-                                '$setOnInsert': {'found_on': today}},
+                               {'$set': item_to_db,
+                                '$setOnInsert': {'created_at': today}},
                                upsert=True)
         logging.debug("Home {} added to MongoDB database!".format(item['url']))
 
