@@ -10,6 +10,10 @@ class HabitacliaSpider(BaseSpider):
     allowed_domains = ["habitaclia.com"]
     download_delay = 0.5
 
+    xpath_list = '//ul[@class="enlista"]/li'
+    xpath_list_item = '//a[@itemprop="name"]'
+    xpath_list_item_price = '//span[@itemprop="price"]'
+
     start_urls = [
         'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___bonanova/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',
         'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___galvany/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',
@@ -21,12 +25,6 @@ class HabitacliaSpider(BaseSpider):
              callback='parse_flat_list',
              follow=True),
     )
-
-    def parse_flat_list(self, response):
-        flats = response.xpath("//ul[@class='enlista']/li")
-
-        for flat in flats.xpath("//a[@itemprop='name']"):
-            yield response.follow(flat, callback=self.parse_flat)
 
     def parse_flat(self, response):
         info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature"]/strong/text()'
@@ -49,4 +47,4 @@ class HabitacliaSpider(BaseSpider):
 
         yield HomeItem(**flat)
 
-    parse_start_url = parse_flat_list
+

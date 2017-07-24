@@ -11,6 +11,10 @@ class IdealistaSpider(BaseSpider):
     allowed_domains = ["idealista.com"]
     download_delay = 3
 
+    xpath_list = "//div[@class='items-container']/article"
+    xpath_list_item = "//a[@class='item-link ']"
+    xpath_list_item_price = '//span[@class="item-price"]'
+
     start_urls = [
         'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/',
     ]
@@ -23,12 +27,6 @@ class IdealistaSpider(BaseSpider):
         # Filter all flats
         # Rule(LinkExtractor(allow=('inmueble\.')), callback='parse_flats', follow=False)
     )
-
-    def parse_flat_list(self, response):
-        flats = response.xpath("//div[@class='items-container']/article")
-
-        for flat in flats.xpath("//a[@class='item-link ']"):
-            yield response.follow(flat, callback=self.parse_flat)
 
     def parse_flat(self, response):
 
@@ -58,5 +56,3 @@ class IdealistaSpider(BaseSpider):
 
         yield HomeItem(**flat)
 
-    # Overriding parse_start_url to get the first page
-    parse_start_url = parse_flat_list
