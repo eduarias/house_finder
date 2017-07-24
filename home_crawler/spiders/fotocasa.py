@@ -1,14 +1,19 @@
-from home_crawler.items import FotocasaItem
-from scrapy.contrib.spiders import Rule
-from scrapy.contrib.linkextractors import LinkExtractor
-from datetime import datetime
+from home_crawler.items import HomeItem
+from scrapy.spiders import Rule
+from scrapy.linkextractors import LinkExtractor
 from home_crawler.spiders.BaseSpider import BaseSpider
+from home_crawler.pipelines import clean_int
 
 
 class FotocasaSpider(BaseSpider):
     name = "fotocasa"
     allowed_domains = ["fotocasa.es"]
-    download_delay = 0.5
+    download_delay = 3
+
+    xpath_list = '//div[@class="re-Searchresult"]'
+    xpath_list_item = './/div[@class="re-Searchresult-item"]'
+    xpath_list_item_href = './/a[@class="re-Card-title"]/@href'
+    xpath_list_item_price = './/span[@class="re-Card-price"]/text()'
 
     start_urls = [
         'http://www.fotocasa.es/es/alquiler/casas/barcelona-capital/sarria-sant-gervasi/l',
@@ -23,36 +28,20 @@ class FotocasaSpider(BaseSpider):
         # Rule(LinkExtractor(allow=('inmueble\.')), callback='parse_flats', follow=False)
     )
 
-    def parse_flat_list(self, response):
-        flats = response.xpath('//div[@class="re-Searchresult"]')
-
-        for flat in flats.xpath('//a[@class="re-Searchresult-itemRow"]'):
-            yield response.follow(flat, callback=self.parse_flat)
-
     def parse_flat(self, response):
 
-        flat = {'id_fotocasa': self._clean_int(
-                    response.xpath('//div[@id="detailReference"]/text()').extract()[0]
-                    ),
-                'title': response.xpath('//h1[@class="property-title"]/text()').extract()[0],
-                'update_date': None,
+        flat = {'site_id': clean_int(self.extract_from_xpath(response, '//div[@id="detailReference"]/text()')),
+                'website': 'Fotocasa',
+                'title': self.extract_from_xpath(response, '//h1[@class="property-title"]/text()'),
                 'url': response.url,
-                'price':self._clean_int(
-                    response.xpath('//span[@id="detail-quickaccess_property_price"]/b/text()').extract()[0]
-                    ),
-                'sqft_m2': self._clean_int(
-                    response.xpath('//*[@id="litSurface"]//text()').extract()[0]
-                    ),
-                'rooms': self._clean_int(
-                    response.xpath('//*[@id="litRooms"]//text()').extract()[0]
-                    ),
-                'baths': self._clean_int(
-                    response.xpath('//*[@id="litBaths"]//text()').extract()[0]
-                    ),
-                'address': response.xpath("//div[@class='detail-section-content']/text()").extract()[0],
-                'last_updated': datetime.now().strftime('%Y-%m-%d')
+                'price': self.extract_from_xpath(response, '//span[@id="detail-quickaccess_property_price"]/b/text()'),
+                'sqft_m2': self.extract_from_xpath(response, '//*[@id="litSurface"]//text()'),
+                'rooms': self.extract_from_xpath(response, '//*[@id="litRooms"]//text()'),
+                'baths': self.extract_from_xpath(response, '//*[@id="litBaths"]//text()'),
+                'address': self.extract_from_xpath(response, "//div[@class='detail-section-content']/text()"),
         }
 
-        yield FotocasaItem(**flat)
+        yield HomeItem(**flat)
 
-    parse_start_url = parse_flat_list
+    def get_url(self, response, url):
+        return response.urljoin(url)
