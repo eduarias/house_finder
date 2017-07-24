@@ -1,14 +1,20 @@
-from home_crawler.items import HabitacliaItem
-from scrapy.contrib.spiders import Rule
-from scrapy.contrib.linkextractors import LinkExtractor
-from datetime import datetime
+from home_crawler.items import HomeItem
+from scrapy.spiders import Rule
+from scrapy.linkextractors import LinkExtractor
 from home_crawler.spiders.BaseSpider import BaseSpider
+from home_crawler.pipelines import clean_int
 
 
 class HabitacliaSpider(BaseSpider):
+
     name = "habitaclia"
     allowed_domains = ["habitaclia.com"]
     download_delay = 0.5
+
+    xpath_list = '//ul[@class="enlista"]'
+    xpath_list_item = './/li[@data-id]'
+    xpath_list_item_href = './/a[@itemprop="name"]/@href'
+    xpath_list_item_price = './/span[@itemprop="price"]/text()'
 
     start_urls = [
         'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___bonanova/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',
@@ -17,39 +23,31 @@ class HabitacliaSpider(BaseSpider):
 
     rules = (
         # Filter all the flats paginated by the website following the pattern indicated
-        Rule(LinkExtractor(restrict_xpaths=("//a[@class='siguiente']")),
+        Rule(LinkExtractor(restrict_xpaths="//a[@class='siguiente']"),
              callback='parse_flat_list',
              follow=True),
     )
 
-    def parse_flat_list(self, response):
-        flats = response.xpath("//ul[@class='enlista']/li")
-
-        for flat in flats.xpath("//a[@itemprop='name']"):
-            yield response.follow(flat, callback=self.parse_flat)
-
     def parse_flat(self, response):
-        info_data = response.xpath('//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature"]/strong/text()').extract()
+        info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature"]/strong/text()'
 
         try:
-            address = response.xpath("//div[@id='addressPromo']/ul/li/text()").extract()[0]
+            address = self.extract_from_xpath(response, "//div[@id='addressPromo']/ul/li/text()")
         except IndexError:
             address = None
 
-        flat = {'id_habitaclia': self._clean_int(
-                    response.xpath('//span[@class="detail-id"]/text()').extract()[0]
-                    ),
-                'title': response.xpath('//h1/text()').extract()[0],
-                'update_date': None,
+        flat = {'site_id': clean_int(response.xpath('//span[@class="detail-id"]/text()').extract_first()),
+                'website': 'Habitaclia',
+                'title': response.xpath('//h1/text()').extract_first(),
                 'url': response.url.split('?')[0],
-                'price': self._clean_int(response.xpath("//div[@class='price']/span[@itemprop='price']/text()").extract()[0]),
-                'sqft_m2': self._clean_int(info_data[0]),
-                'rooms': self._clean_int(info_data[1]),
+                'price': response.xpath("//div[@class='price']/span[@itemprop='price']/text()").extract_first(),
+                'sqft_m2': self.extract_from_xpath(response, info_xpath, 0),
+                'rooms': self.extract_from_xpath(response, info_xpath, 1),
                 'address': address,
-                'baths': self._clean_int(info_data[2]),
-                'last_updated': datetime.now().strftime('%Y-%m-%d')}
+                'baths': self.extract_from_xpath(response, info_xpath, 2),
+                }
 
-        yield HabitacliaItem(**flat)
+        yield HomeItem(**flat)
 
-    # Overriding parse_start_url to get the first page
-    parse_start_url = parse_flat_list
+    def get_url(self, response, url):
+        return url.split('?')[0]

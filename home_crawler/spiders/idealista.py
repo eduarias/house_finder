@@ -1,14 +1,20 @@
-from home_crawler.items import IdealistaItem
-from scrapy.contrib.spiders import Rule
-from scrapy.contrib.linkextractors import LinkExtractor
-from datetime import datetime
+from scrapy.linkextractors import LinkExtractor
+from scrapy.spiders import Rule
+
+from home_crawler.items import HomeItem
 from home_crawler.spiders.BaseSpider import BaseSpider
+from home_crawler.pipelines import clean_int
 
 
 class IdealistaSpider(BaseSpider):
     name = "idealista"
     allowed_domains = ["idealista.com"]
-    download_delay = 1
+    download_delay = 3
+
+    xpath_list = '//div[@class="items-container"]/article'
+    xpath_list_item = './/div[@class="item-info-container"]'
+    xpath_list_item_href = './/a[@class="item-link "]/@href'
+    xpath_list_item_price = './/span[@class="item-price"]/text()'
 
     start_urls = [
         'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/',
@@ -16,49 +22,40 @@ class IdealistaSpider(BaseSpider):
 
     rules = (
         # Filter all the flats paginated by the website following the pattern indicated
-        Rule(LinkExtractor(restrict_xpaths=("//a[@class='icon-arrow-right-after']")),
+        Rule(LinkExtractor(restrict_xpaths="//a[@class='icon-arrow-right-after']"),
              callback='parse_flat_list',
              follow=True),
         # Filter all flats
         # Rule(LinkExtractor(allow=('inmueble\.')), callback='parse_flats', follow=False)
     )
 
-    def parse_flat_list(self, response):
-        flats = response.xpath("//div[@class='items-container']/article")
-
-        for flat in flats.xpath("//a[@class='item-link ']"):
-            yield response.follow(flat, callback=self.parse_flat)
-
     def parse_flat(self, response):
-        info_data = response.xpath('//div[@id="js-head-second"]//ul[@class="feature-container"]/li[@class="feature"]/text()').extract()
 
-        baths = self._clean_int(response.xpath(
-            '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]/text()')
-                                .extract()[0])
+        baths = clean_int(self.extract_from_xpath(response,
+            '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]/text()'))
 
         try:
-            toilets = self._clean_int(response.xpath(
-                '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "aseo")]/text()')
-                                      .extract()[0])
+            toilets = clean_int(self.extract_from_xpath(response,
+                '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "aseo")]/text()'))
         except IndexError:
             toilets = 0
 
-        baths += toilets
+        if toilets:
+            baths += toilets
 
-        flat = {'id_idealista': list(filter(None, response.url.split('/')))[-1],
-                'title': response.xpath("//h1/span/text()").extract()[0].strip(),
-                'update_date': response.xpath("//section[@id='stats']/p/text()").extract()[0],
+        flat = {'site_id': list(filter(None, response.url.split('/')))[-1],
+                'website': 'Idealista',
+                'title': response.xpath("//h1/span/text()").extract_first(),
+                'article_update_date': response.xpath("//section[@id='stats']/p/text()").extract_first(),
                 'url': response.url,
-                'price': self._clean_int(response.xpath('//p[@class="price"]/text()').extract()[0]),
-                'sqft_m2': self._clean_int(response.xpath('//div[@class="info-data"]/span[2]/span/text()')
-                                           .extract()[0]),
-                'rooms': self._clean_int(response.xpath('//div[@class="info-data"]/span[3]/span/text()')
-                                         .extract()[0]),
+                'price': response.xpath('//p[@class="price"]/text()').extract_first(),
+                'sqft_m2': response.xpath('//div[@class="info-data"]/span[2]/span/text()').extract_first(),
+                'rooms': response.xpath('//div[@class="info-data"]/span[3]/span/text()').extract_first(),
                 'address': None,
                 'baths': baths,
-                'last_updated': datetime.now().strftime('%Y-%m-%d')}
+                }
 
-        yield IdealistaItem(**flat)
+        yield HomeItem(**flat)
 
-    # Overriding parse_start_url to get the first page
-    parse_start_url = parse_flat_list
+    def get_url(self, response, url):
+        return response.urljoin(url)
