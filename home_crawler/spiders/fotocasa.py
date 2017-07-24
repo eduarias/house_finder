@@ -10,6 +10,10 @@ class FotocasaSpider(BaseSpider):
     allowed_domains = ["fotocasa.es"]
     download_delay = 3
 
+    xpath_list = '//div[@class="re-Searchresult"]'
+    xpath_list_item = '//div[@class="re-Searchresult-item"]//a[@class="re-Card-title"]'
+    xpath_list_item_price = '//span[@class="re-Card-price"]'
+
     start_urls = [
         'http://www.fotocasa.es/es/alquiler/casas/barcelona-capital/sarria-sant-gervasi/l',
     ]
@@ -22,12 +26,6 @@ class FotocasaSpider(BaseSpider):
         # Filter all flats
         # Rule(LinkExtractor(allow=('inmueble\.')), callback='parse_flats', follow=False)
     )
-
-    def parse_flat_list(self, response):
-        flats = response.xpath('//div[@class="re-Searchresult"]')
-
-        for flat in flats.xpath('//div[@class="re-Searchresult-item"]//a[@class="re-Card-title"]'):
-            yield response.follow(flat, callback=self.parse_flat)
 
     def parse_flat(self, response):
 
@@ -44,4 +42,3 @@ class FotocasaSpider(BaseSpider):
 
         yield HomeItem(**flat)
 
-    parse_start_url = parse_flat_list

@@ -3,6 +3,7 @@ import pymongo
 from django.db import IntegrityError
 from scrapy.conf import settings
 from scrapy.exceptions import DropItem
+from home_crawler.items import HomeItem
 import logging
 from datetime import datetime
 import re
@@ -40,6 +41,17 @@ class HomeBasePipeline(object):
     def post_process_item(self, item, spider):
         raise NotImplementedError
 
+    def is_url_in_db(self, url):
+        raise NotImplementedError
+
+    def open_spider(self, spider):
+        spider.is_url_in_db = self.is_url_in_db
+        spider.update_price = self.update_price
+
+    @abstractmethod
+    def update_price(self, url, price):
+        raise NotImplementedError
+
 
 class DjangoPipeline(HomeBasePipeline):
 
@@ -50,6 +62,13 @@ class DjangoPipeline(HomeBasePipeline):
         except IntegrityError:
             logging.info("Url already in database: {}".format(item['url']))
         return item
+
+    def is_url_in_db(self, url):
+        return True if HomeItem.objects.get(url=url) else False
+
+    def update_price(self, url, price):
+        house = HomeItem.objects.get(url=url)
+        house.price = clean_int(price)
 
 
 class MongoDBPipeline(HomeBasePipeline):
@@ -77,3 +96,9 @@ class MongoDBPipeline(HomeBasePipeline):
         logging.debug("Home {} added to MongoDB database!".format(item['url']))
 
         return item
+
+    def is_url_in_db(self, url):
+        self.collection.find_one({"url": url})
+
+    def update_price(self, url, price):
+        self.collection.update({'url': 'url'}, {'$set': {'price': price}})
