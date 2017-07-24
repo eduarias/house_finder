@@ -1,14 +1,13 @@
 from abc import abstractmethod
-from urllib.parse import urljoin
 
 from scrapy.spiders import CrawlSpider
-from scrapy.utils.response import get_base_url
 
 
 class BaseSpider(CrawlSpider):
 
     xpath_list = None
     xpath_list_item = None
+    xpath_list_item_href = None
     xpath_list_item_price = None
 
     def parse_flat_list(self, response):
@@ -17,17 +16,20 @@ class BaseSpider(CrawlSpider):
         :param response: HTTP response of the houses list
         :return: Callback for a single house crawling
         """
-        base_url = get_base_url(response)
 
         flats = response.xpath(self.xpath_list)
         for flat in flats.xpath(self.xpath_list_item):
-            relative_url = flat.xpath('@href').extract()[0]
-            house_url = urljoin(base_url, relative_url)
+            url = flat.xpath(self.xpath_list_item_href).extract_first()
+            house_url = self.get_url(response, url)
             if not self.is_url_in_db(house_url):
-                yield response.follow(flat, callback=self.parse_flat)
+                yield response.follow(house_url, callback=self.parse_flat)
             else:
-                price = self.extract_from_xpath(response, self.xpath_list_item_price)
+                price = flat.xpath(self.xpath_list_item_price).extract_first()
                 self.update_price(house_url, price)
+
+    @abstractmethod
+    def get_url(self, response, url):
+        raise NotImplementedError
 
     @abstractmethod
     def parse_flat(self, response):

@@ -11,8 +11,9 @@ class FotocasaSpider(BaseSpider):
     download_delay = 3
 
     xpath_list = '//div[@class="re-Searchresult"]'
-    xpath_list_item = '//div[@class="re-Searchresult-item"]//a[@class="re-Card-title"]'
-    xpath_list_item_price = '//span[@class="re-Card-price"]'
+    xpath_list_item = './/div[@class="re-Searchresult-item"]'
+    xpath_list_item_href = './/a[@class="re-Card-title"]/@href'
+    xpath_list_item_price = './/span[@class="re-Card-price"]/text()'
 
     start_urls = [
         'http://www.fotocasa.es/es/alquiler/casas/barcelona-capital/sarria-sant-gervasi/l',
@@ -42,3 +43,5 @@ class FotocasaSpider(BaseSpider):
 
         yield HomeItem(**flat)
 
+    def get_url(self, response, url):
+        return response.urljoin(url)

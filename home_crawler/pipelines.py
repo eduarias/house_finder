@@ -3,7 +3,7 @@ import pymongo
 from django.db import IntegrityError
 from scrapy.conf import settings
 from scrapy.exceptions import DropItem
-from home_crawler.items import HomeItem
+from store_houses.models import Home
 import logging
 from datetime import datetime
 import re
@@ -64,11 +64,18 @@ class DjangoPipeline(HomeBasePipeline):
         return item
 
     def is_url_in_db(self, url):
-        return True if HomeItem.objects.get(url=url) else False
+        try:
+            house = Home.objects.get(url=url)
+        except Home.DoesNotExist:
+            house = None
+        return True if house else False
 
     def update_price(self, url, price):
-        house = HomeItem.objects.get(url=url)
-        house.price = clean_int(price)
+        house = Home.objects.get(url=url)
+        price = clean_int(price)
+        logging.info('Url already in database: {}, updating price: {}'.format(url, price))
+        house.price = price
+        house.save()
 
 
 class MongoDBPipeline(HomeBasePipeline):

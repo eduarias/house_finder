@@ -11,9 +11,10 @@ class IdealistaSpider(BaseSpider):
     allowed_domains = ["idealista.com"]
     download_delay = 3
 
-    xpath_list = "//div[@class='items-container']/article"
-    xpath_list_item = "//a[@class='item-link ']"
-    xpath_list_item_price = '//span[@class="item-price"]'
+    xpath_list = '//div[@class="items-container"]/article'
+    xpath_list_item = './/div[@class="item-info-container"]'
+    xpath_list_item_href = './/a[@class="item-link "]/@href'
+    xpath_list_item_price = './/span[@class="item-price"]/text()'
 
     start_urls = [
         'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/',
@@ -44,15 +45,17 @@ class IdealistaSpider(BaseSpider):
 
         flat = {'site_id': list(filter(None, response.url.split('/')))[-1],
                 'website': 'Idealista',
-                'title': self.extract_from_xpath(response, "//h1/span/text()"),
-                'article_update_date': self.extract_from_xpath(response, "//section[@id='stats']/p/text()"),
+                'title': response.xpath("//h1/span/text()").extract_first(),
+                'article_update_date': response.xpath("//section[@id='stats']/p/text()").extract_first(),
                 'url': response.url,
-                'price': self.extract_from_xpath(response, '//p[@class="price"]/text()'),
-                'sqft_m2': self.extract_from_xpath(response, '//div[@class="info-data"]/span[2]/span/text()'),
-                'rooms': self.extract_from_xpath(response, '//div[@class="info-data"]/span[3]/span/text()'),
+                'price': response.xpath('//p[@class="price"]/text()').extract_first(),
+                'sqft_m2': response.xpath('//div[@class="info-data"]/span[2]/span/text()').extract_first(),
+                'rooms': response.xpath('//div[@class="info-data"]/span[3]/span/text()').extract_first(),
                 'address': None,
                 'baths': baths,
                 }
 
         yield HomeItem(**flat)
 
+    def get_url(self, response, url):
+        return response.urljoin(url)
