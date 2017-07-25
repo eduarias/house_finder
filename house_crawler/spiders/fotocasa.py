@@ -1,8 +1,8 @@
-from home_crawler.items import HomeItem
+from house_crawler.items import HouseItem
 from scrapy.spiders import Rule
 from scrapy.linkextractors import LinkExtractor
-from home_crawler.spiders.BaseSpider import BaseSpider
-from home_crawler.pipelines import clean_int
+from house_crawler.spiders.BaseSpider import BaseSpider
+from house_crawler.pipelines import clean_int
 
 
 class FotocasaSpider(BaseSpider):
@@ -20,17 +20,17 @@ class FotocasaSpider(BaseSpider):
     ]
 
     rules = (
-        # Filter all the flats paginated by the website following the pattern indicated
+        # Filter all the houses paginated by the website following the pattern indicated
         Rule(LinkExtractor(restrict_xpaths='//a[@class="sui-Pagination-link" and text()=">"]'),
-             callback='parse_flat_list',
+             callback='parse_houses_list',
              follow=True),
-        # Filter all flats
-        # Rule(LinkExtractor(allow=('inmueble\.')), callback='parse_flats', follow=False)
+        # Filter all houses
+        # Rule(LinkExtractor(allow=('inmueble\.')), callback='parse_houses', follow=False)
     )
 
-    def parse_flat(self, response):
+    def parse_house(self, response):
 
-        flat = {'site_id': clean_int(self.extract_from_xpath(response, '//div[@id="detailReference"]/text()')),
+        house = {'site_id': clean_int(self.extract_from_xpath(response, '//div[@id="detailReference"]/text()')),
                 'website': 'Fotocasa',
                 'title': self.extract_from_xpath(response, '//h1[@class="property-title"]/text()'),
                 'url': response.url,
@@ -41,7 +41,7 @@ class FotocasaSpider(BaseSpider):
                 'address': self.extract_from_xpath(response, "//div[@class='detail-section-content']/text()"),
         }
 
-        yield HomeItem(**flat)
+        yield HouseItem(**house)
 
     def get_url(self, response, url):
         return response.urljoin(url)

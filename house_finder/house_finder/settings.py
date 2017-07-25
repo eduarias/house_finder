@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'home_finder.urls'
+ROOT_URLCONF = 'house_finder.urls'
 
 TEMPLATES = [
     {
@@ -68,7 +68,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'home_finder.wsgi.application'
+WSGI_APPLICATION = 'house_finder.wsgi.application'
 
 
 # Database
