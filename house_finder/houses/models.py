@@ -1,4 +1,6 @@
+import datetime
 from django.db import models
+from django.utils import timezone
 
 
 class House(models.Model):
@@ -21,3 +23,9 @@ class House(models.Model):
 
     class Meta:
         unique_together = ('site_id', 'website',)
+
+    def __str__(self):
+        return self.title
+
+    def was_found_recently(self):
+        return self.created_at >= timezone.now() - datetime.timedelta(days=1)
