@@ -3,7 +3,7 @@ import pymongo
 from django.db import IntegrityError
 from scrapy.conf import settings
 from scrapy.exceptions import DropItem
-from store_houses.models import House
+from houses.models import House
 import logging
 from datetime import datetime
 import re
