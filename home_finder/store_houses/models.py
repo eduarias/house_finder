@@ -15,6 +15,7 @@ class Home(models.Model):
     is_interesting = models.BooleanField(default=False)
     is_discard = models.BooleanField(default=False)
     has_seen = models.BooleanField(default=False)
+    notes = models.TextField(default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
