@@ -3,7 +3,7 @@ import pymongo
 from django.db import IntegrityError
 from scrapy.conf import settings
 from scrapy.exceptions import DropItem
-from store_houses.models import Home
+from store_houses.models import House
 import logging
 from datetime import datetime
 import re
@@ -25,7 +25,7 @@ def clean_int(text):
         return None
 
 
-class HomeBasePipeline(object):
+class HouseBasePipeline(object):
 
     def process_item(self, item, spider):
         clean_int_list = ['price', 'sqft_m2', 'rooms', 'baths']
@@ -53,32 +53,32 @@ class HomeBasePipeline(object):
         raise NotImplementedError
 
 
-class DjangoPipeline(HomeBasePipeline):
+class DjangoPipeline(HouseBasePipeline):
 
     def post_process_item(self, item, spider):
         try:
             item.save()
-            logging.debug("Home added to Django database! {}".format(item['url']))
+            logging.debug("House added to Django database! {}".format(item['url']))
         except IntegrityError:
             logging.info("Url already in database: {}".format(item['url']))
         return item
 
     def is_url_in_db(self, url):
         try:
-            house = Home.objects.get(url=url)
-        except Home.DoesNotExist:
+            house = House.objects.get(url=url)
+        except House.DoesNotExist:
             house = None
         return True if house else False
 
     def update_price(self, url, price):
-        house = Home.objects.get(url=url)
+        house = House.objects.get(url=url)
         price = clean_int(price)
         logging.info('Url already in database: {}, updating price: {}'.format(url, price))
         house.price = price
         house.save()
 
 
-class MongoDBPipeline(HomeBasePipeline):
+class MongoDBPipeline(HouseBasePipeline):
     def __init__(self):
         connection = pymongo.MongoClient(
             settings['MONGODB_SERVER'],
@@ -103,7 +103,7 @@ class MongoDBPipeline(HomeBasePipeline):
                                {'$set': item_to_db,
                                 '$setOnInsert': {'created_at': today}},
                                upsert=True)
-        logging.debug("Home {} added to MongoDB database!".format(item['url']))
+        logging.debug("House {} added to MongoDB database!".format(item['url']))
 
         return item
 

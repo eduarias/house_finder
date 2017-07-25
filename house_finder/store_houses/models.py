@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Home(models.Model):
+class House(models.Model):
     site_id = models.CharField(max_length=100)
     website = models.CharField(max_length=100)
     title = models.CharField(max_length=200)
