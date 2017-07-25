@@ -10,10 +10,10 @@
 import os
 import sys
 
-BOT_NAME = 'home_crawler'
+BOT_NAME = 'house_crawler'
 
-SPIDER_MODULES = ['home_crawler.spiders']
-NEWSPIDER_MODULE = 'home_crawler.spiders'
+SPIDER_MODULES = ['house_crawler.spiders']
+NEWSPIDER_MODULE = 'house_crawler.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'home_crawler (example@example.net)'
@@ -22,14 +22,14 @@ HTTPCACHE_ENABLED = False
 AUTOTHROTTLE_ENABLED = True
 ROBOTSTXT_OBEY = True
 
-ITEM_PIPELINES = {'home_crawler.pipelines.DjangoPipeline': 100,
+ITEM_PIPELINES = {'house_crawler.pipelines.DjangoPipeline': 100,
                   }
 
 # LOG_STDOUT = True
 # LOG_FILE = '/tmp/scrapy_output.txt'
 
-DJANGO_PROJECT_PATH = '/home/eduarias/workspace/home_crawler/home_finder'
-DJANGO_SETTINGS_MODULE = 'home_finder.settings'
+DJANGO_PROJECT_PATH = '/home/eduarias/workspace/house_crawler/house_finder'
+DJANGO_SETTINGS_MODULE = 'house_finder.settings'
 
 sys.path.insert(0, DJANGO_PROJECT_PATH)
 os.environ['DJANGO_SETTINGS_MODULE'] = DJANGO_SETTINGS_MODULE

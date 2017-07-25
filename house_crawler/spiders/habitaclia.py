@@ -1,8 +1,8 @@
-from home_crawler.items import HomeItem
+from house_crawler.items import HouseItem
 from scrapy.spiders import Rule
 from scrapy.linkextractors import LinkExtractor
-from home_crawler.spiders.BaseSpider import BaseSpider
-from home_crawler.pipelines import clean_int
+from house_crawler.spiders.BaseSpider import BaseSpider
+from house_crawler.pipelines import clean_int
 
 
 class HabitacliaSpider(BaseSpider):
@@ -22,13 +22,13 @@ class HabitacliaSpider(BaseSpider):
     ]
 
     rules = (
-        # Filter all the flats paginated by the website following the pattern indicated
+        # Filter all the houses paginated by the website following the pattern indicated
         Rule(LinkExtractor(restrict_xpaths="//a[@class='siguiente']"),
-             callback='parse_flat_list',
+             callback='parse_houses_list',
              follow=True),
     )
 
-    def parse_flat(self, response):
+    def parse_house(self, response):
         info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature"]/strong/text()'
 
         try:
@@ -36,7 +36,7 @@ class HabitacliaSpider(BaseSpider):
         except IndexError:
             address = None
 
-        flat = {'site_id': clean_int(response.xpath('//span[@class="detail-id"]/text()').extract_first()),
+        house = {'site_id': clean_int(response.xpath('//span[@class="detail-id"]/text()').extract_first()),
                 'website': 'Habitaclia',
                 'title': response.xpath('//h1/text()').extract_first(),
                 'url': response.url.split('?')[0],
@@ -47,7 +47,7 @@ class HabitacliaSpider(BaseSpider):
                 'baths': self.extract_from_xpath(response, info_xpath, 2),
                 }
 
-        yield HomeItem(**flat)
+        yield HouseItem(**house)
 
     def get_url(self, response, url):
         return url.split('?')[0]
