@@ -1,9 +1,9 @@
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import Rule
 
-from home_crawler.items import HomeItem
-from home_crawler.spiders.BaseSpider import BaseSpider
-from home_crawler.pipelines import clean_int
+from house_crawler.items import HouseItem
+from house_crawler.spiders.BaseSpider import BaseSpider
+from house_crawler.pipelines import clean_int
 
 
 class IdealistaSpider(BaseSpider):
@@ -21,15 +21,15 @@ class IdealistaSpider(BaseSpider):
     ]
 
     rules = (
-        # Filter all the flats paginated by the website following the pattern indicated
+        # Filter all the houses paginated by the website following the pattern indicated
         Rule(LinkExtractor(restrict_xpaths="//a[@class='icon-arrow-right-after']"),
-             callback='parse_flat_list',
+             callback='parse_houses_list',
              follow=True),
-        # Filter all flats
-        # Rule(LinkExtractor(allow=('inmueble\.')), callback='parse_flats', follow=False)
+        # Filter all houses
+        # Rule(LinkExtractor(allow=('inmueble\.')), callback='parse_houses', follow=False)
     )
 
-    def parse_flat(self, response):
+    def parse_house(self, response):
 
         baths = clean_int(self.extract_from_xpath(response,
             '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]/text()'))
@@ -43,7 +43,7 @@ class IdealistaSpider(BaseSpider):
         if toilets:
             baths += toilets
 
-        flat = {'site_id': list(filter(None, response.url.split('/')))[-1],
+        house = {'site_id': list(filter(None, response.url.split('/')))[-1],
                 'website': 'Idealista',
                 'title': response.xpath("//h1/span/text()").extract_first(),
                 'article_update_date': response.xpath("//section[@id='stats']/p/text()").extract_first(),
@@ -55,7 +55,7 @@ class IdealistaSpider(BaseSpider):
                 'baths': baths,
                 }
 
-        yield HomeItem(**flat)
+        yield HouseItem(**house)
 
     def get_url(self, response, url):
         return response.urljoin(url)
