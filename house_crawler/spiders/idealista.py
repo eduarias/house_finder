@@ -1,6 +1,3 @@
-from scrapy.linkextractors import LinkExtractor
-from scrapy.spiders import Rule
-
 from house_crawler.items import HouseItem
 from house_crawler.spiders.BaseSpider import BaseSpider
 from house_crawler.pipelines import clean_int
@@ -15,19 +12,11 @@ class IdealistaSpider(BaseSpider):
     xpath_list_item = './/div[@class="item-info-container"]'
     xpath_list_item_href = './/a[@class="item-link "]/@href'
     xpath_list_item_price = './/span[@class="item-price"]/text()'
+    xpath_list_next = "//a[@class='icon-arrow-right-after']"
 
-    start_urls = [
-        'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/',
-    ]
-
-    rules = (
-        # Filter all the houses paginated by the website following the pattern indicated
-        Rule(LinkExtractor(restrict_xpaths="//a[@class='icon-arrow-right-after']"),
-             callback='parse_houses_list',
-             follow=True),
-        # Filter all houses
-        # Rule(LinkExtractor(allow=('inmueble\.')), callback='parse_houses', follow=False)
-    )
+    start_urls_neighborhoods = {
+        'Sant Gervasi - Bonanova': 'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/',
+    }
 
     def parse_house(self, response):
 
@@ -46,6 +35,7 @@ class IdealistaSpider(BaseSpider):
         house = {'site_id': list(filter(None, response.url.split('/')))[-1],
                 'website': 'Idealista',
                 'title': response.xpath("//h1/span/text()").extract_first(),
+                'neighborhood': response.meta['neighborhood'],
                 'article_update_date': response.xpath("//section[@id='stats']/p/text()").extract_first(),
                 'url': response.url,
                 'price': response.xpath('//p[@class="price"]/text()').extract_first(),
