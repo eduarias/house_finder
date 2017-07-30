@@ -22,14 +22,15 @@ class FotocasaSpider(BaseSpider):
 
         house = {'site_id': clean_int(self.extract_from_xpath(response, '//div[@id="detailReference"]/text()')),
                 'website': 'Fotocasa',
-                'title': self.extract_from_xpath(response, '//h1[@class="property-title"]/text()'),
+                'title': response.xpath('//h1[@class="property-title"]/text()').extract_first().strip(),
                 'neighborhood': response.meta['neighborhood'],
+                'description': response.xpath('//div[@class="detail-section-content"]/p/text()').extract_first().strip(),
                 'url': response.url,
-                'price': self.extract_from_xpath(response, '//span[@id="detail-quickaccess_property_price"]/b/text()'),
-                'sqft_m2': self.extract_from_xpath(response, '//*[@id="litSurface"]//text()'),
-                'rooms': self.extract_from_xpath(response, '//*[@id="litRooms"]//text()'),
-                'baths': self.extract_from_xpath(response, '//*[@id="litBaths"]//text()'),
-                'address': self.extract_from_xpath(response, "//div[@class='detail-section-content']/text()"),
+                'price': response.xpath('//span[@id="detail-quickaccess_property_price"]/b/text()').extract_first(),
+                'sqft_m2': response.xpath('//*[@id="litSurface"]//text()').extract_first(),
+                'rooms': response.xpath('//*[@id="litRooms"]//text()').extract_first(),
+                'baths': response.xpath('//*[@id="litBaths"]//text()').extract_first(),
+                'address': response.xpath('//div[@class="detail-section-content"]/text()').extract_first(),
         }
 
         yield HouseItem(**house)

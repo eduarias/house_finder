@@ -6,6 +6,7 @@ class House(models.Model):
     website = models.CharField(max_length=100)
     title = models.CharField(max_length=200)
     neighborhood = models.CharField(max_length=100)
+    description = models.TextField(default=None)
     price = models.IntegerField()
     url = models.URLField(unique=True)
     address = models.CharField(max_length=100, blank=True, null=True)
