@@ -1,6 +1,4 @@
 from house_crawler.items import HouseItem
-from scrapy.spiders import Rule
-from scrapy.linkextractors import LinkExtractor
 from house_crawler.spiders.BaseSpider import BaseSpider
 from house_crawler.pipelines import clean_int
 
@@ -15,18 +13,14 @@ class HabitacliaSpider(BaseSpider):
     xpath_list_item = './/li[@data-id]'
     xpath_list_item_href = './/a[@itemprop="name"]/@href'
     xpath_list_item_price = './/span[@itemprop="price"]/text()'
+    xpath_list_next = '//a[@class="siguiente"]/@href'
 
-    start_urls = [
-        'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___bonanova/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',
-        'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___galvany/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',
-    ]
+    start_urls_neighborhoods = {
+        'Sant Gervasi - Bonanova': 'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___bonanova/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',
+        'Sant Gervasi - Galvany': 'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___galvany/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',
+    }
 
-    rules = (
-        # Filter all the houses paginated by the website following the pattern indicated
-        Rule(LinkExtractor(restrict_xpaths="//a[@class='siguiente']"),
-             callback='parse_houses_list',
-             follow=True),
-    )
+
 
     def parse_house(self, response):
         info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature"]/strong/text()'
@@ -39,6 +33,7 @@ class HabitacliaSpider(BaseSpider):
         house = {'site_id': clean_int(response.xpath('//span[@class="detail-id"]/text()').extract_first()),
                 'website': 'Habitaclia',
                 'title': response.xpath('//h1/text()').extract_first(),
+                'neighborhood': response.meta['neighborhood'],
                 'url': response.url.split('?')[0],
                 'price': response.xpath("//div[@class='price']/span[@itemprop='price']/text()").extract_first(),
                 'sqft_m2': self.extract_from_xpath(response, info_xpath, 0),
