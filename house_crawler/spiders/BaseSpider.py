@@ -2,8 +2,6 @@ from abc import abstractmethod
 
 from scrapy.spiders import CrawlSpider
 from scrapy.http import Request
-from scrapy.spiders import Rule
-from scrapy.linkextractors import LinkExtractor
 
 
 class BaseSpider(CrawlSpider):
@@ -15,13 +13,6 @@ class BaseSpider(CrawlSpider):
     xpath_list_next = None
 
     start_urls_neighborhoods = None
-
-    # rules = (
-    #     # Filter all the houses paginated by the website following the pattern indicated
-    #     Rule(LinkExtractor(restrict_xpaths=xpath_list_next),
-    #          callback='parse_houses_list',
-    #          follow=True),
-    # )
 
     def parse_houses_list(self, response):
         """
