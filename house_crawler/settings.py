@@ -28,7 +28,8 @@ ITEM_PIPELINES = {'house_crawler.pipelines.DjangoPipeline': 100,
 # LOG_STDOUT = True
 # LOG_FILE = '/tmp/scrapy_output.txt'
 
-DJANGO_PROJECT_PATH = '/home/eduardo/workspace/personal/home_crawl/house_finder'
+PWD = os.path.dirname(__file__)
+DJANGO_PROJECT_PATH = os.path.join(PWD, '..', 'house_finder')
 DJANGO_SETTINGS_MODULE = 'house_finder.settings'
 
 sys.path.insert(0, DJANGO_PROJECT_PATH)
