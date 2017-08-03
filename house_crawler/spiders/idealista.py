@@ -16,6 +16,8 @@ class IdealistaSpider(BaseSpider):
 
     start_urls_neighborhoods = {
         'Sant Gervasi - Bonanova': 'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/',
+        # 'Ciudad Jardín': 'https://www.idealista.com/alquiler-viviendas/las-palmas-de-gran-canaria/centro/ciudad-jardin/',
+        # 'Arenales - Lugo': 'https://www.idealista.com/alquiler-viviendas/las-palmas-de-gran-canaria/centro/arenales-lugo-avda-maritima/',
     }
 
     def parse_house(self, response):
@@ -38,8 +40,7 @@ class IdealistaSpider(BaseSpider):
                  'neighborhood': response.meta['neighborhood'],
                  'description': response.
                      xpath('//section[@id="details"]//div[@class="adCommentsLanguage expandable"]/text()').
-                     extract_first().
-                     strip(),
+                     extract_first(),
                  'article_update_date': response.xpath("//section[@id='stats']/p/text()").extract_first(),
                  'url': response.url,
                  'price': response.xpath('//p[@class="price"]/text()').extract_first(),
