@@ -5,9 +5,9 @@
     <title>Title</title>
 </head>
 <body>
-{% if cheapest_houses_list %}
+{% if houses %}
     <ul>
-    {% for house in cheapest_houses_list %}
+    {% for house in houses %}
         <li><a href="{% url 'houses:detail' house.id %}">{{ house.title }}, {{ house.price }}</a></li>
     {% endfor %}
     </ul>
