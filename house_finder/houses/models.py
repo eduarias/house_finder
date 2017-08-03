@@ -9,7 +9,7 @@ class House(models.Model):
     title = models.CharField(max_length=200)
     neighborhood = models.CharField(max_length=100)
     description = models.TextField(default=None)
-    price = models.IntegerField()
+    price = models.IntegerField(null=True)
     url = models.URLField(unique=True)
     address = models.CharField(max_length=100, blank=True, null=True)
     sqft_m2 = models.IntegerField()

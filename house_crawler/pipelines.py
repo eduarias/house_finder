@@ -29,11 +29,12 @@ class HouseBasePipeline(object):
 
     def process_item(self, item, spider):
         clean_int_list = ['price', 'sqft_m2', 'rooms', 'baths']
+        clean_str_list = ['title', 'description', 'address']
         for element in clean_int_list:
             item[element] = clean_int(item[element])
-        item['title'] = item['title'].strip()
-        if item['address']:
-            item['address'] = item['address'].strip()
+        for element in clean_str_list:
+            if item[element]:
+                item[element] = item[element].strip()
 
         return self.post_process_item(item, spider)
 
