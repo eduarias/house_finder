@@ -5,14 +5,14 @@ from .models import House
 
 class HouseTable(tables.Table):
     title = tables.LinkColumn('houses:detail', args=[A('pk')])
-    # neighborhood = tables.LinkColumn('houses:detail', args=[A('pk')])
-    # price = tables.LinkColumn('houses:detail', args=[A('pk')])
-    # rooms = tables.LinkColumn('houses:detail', args=[A('pk')])
+    url = tables.URLColumn(text=lambda record: record.website)
+    has_seen = tables.BooleanColumn()
 
     class Meta:
         model = House
         fields = ('title', 'neighborhood',
                   'price', 'sqft_m2',
-                  'rooms',)
+                  'rooms', 'url', 'has_seen',
+                  'is_interesting', 'is_discard')
         attrs = {"class": "table-striped table-bordered"}
         empty_text = "There are no customers matching the search criteria..."
