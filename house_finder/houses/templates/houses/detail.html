@@ -1,17 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "houses/master.html" %}
+
+{% block content %}
+
 <h1>{{ house.title }}</h1>
 <div class="house-price">Price: {{ house.price }}</div>
 <div class="house-url">Url: <a href="{{ house.url }}">{{ house.website }}</a></div>
 
-
-
-
-
-</body>
-</html>
+{% endblock content %}
