@@ -1,9 +1,29 @@
 {% extends "houses/master.html" %}
 
 {% block content %}
-
 <h1>{{ house.title }}</h1>
-<div class="house-price">Price: {{ house.price }}</div>
-<div class="house-url">Url: <a href="{{ house.url }}">{{ house.website }}</a></div>
+    <div class="house-price">Price: {{ house.price }} €</div>
+    <div class="house-url">Url: <a href="{{ house.url }}">{{ house.website }}</a></div>
+    <div class="house-sqft_m2">Surface: {{ house.sqft_m2 }} m²</div>
+    <div class="house-rooms">Rooms: {{ house.rooms }}</div>
+    <div class="house-baths">Rooms: {{ house.baths }}</div>
+
+    <div class="house-interesting">Is interesting{{ house.is_interesting }}</div>
+    <div class="house-discarded">Discarded: {{ house.is_discard }}</div>
+    <div class="house-seen">Seen: {{ house.has_seen }}</div>
+    <div class="house-neighborhood">Neighborhood: {{ house.neighborhood }}</div>
+    {% if house.address %}
+        <div class="house-address">Address: {{ house.address }}</div>
+    {% endif %}
+    {% if house.article_update_date %}
+        <div class="house-updated">Article updated at: {{ house.article_update_date }} </div>
+    {% endif %}
+    {% if house.updated_at %}
+        <div class="house-updated">Crawler update: {{ house.updated_at }} </div>
+    {% endif %}
+    <div class="house-found">Found on: {{ house.created_at }} </div>
+    <div class="house-description"><p>{{ house.description }}</p></div>
+
+
 
 {% endblock content %}

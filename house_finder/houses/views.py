@@ -23,3 +23,4 @@ class HousesListView(generic.ListView):
 class DetailView(generic.DetailView):
     model = House
     template_name = 'houses/detail.html'
+    model.has_seen = True
