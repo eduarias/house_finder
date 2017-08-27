@@ -1,0 +1,46 @@
+{% extends "houses/master.html" %}
+
+{% block title %}
+	Listado de casas
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Show flash messages -->
+    {% if messages %}
+        <div class="alert alert-success">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="panel panel-default">
+        <div class="panel-body">
+            {% if houses|length > 0 %}
+                <h2>CASAS</h2>
+                {% for house in houses %}
+                     <div class="col-md-12" style="margin-bottom: 6px">
+                        <div class="col-md-8">
+                            Title: {{ house.title }}, Url: {{ house.url }}, Content: {{ house.content }}
+                         </div>
+                         <div class="col-md-4">
+                             <a href="{% url 'houses:detail' house.id %}" class="btn btn-success">Details</a>
+{#                              <a href="{% url 'delete_post' post.id %}" class="btn btn-danger">Remove</a>#}
+                         </div>
+                     </div>
+                {% endfor %}
+            {% else %}
+                <p>No hay casas</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+	 <div class="navbar navbar-inverse navbar-fixed-bottom">
+	 	<div class="text-center" style="padding-top: 12px">
+	 		<small style="color: #fff">Footer Posts List</small>
+	    </div>
+	</div>
+{% endblock %}

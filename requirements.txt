@@ -2,3 +2,5 @@ Scrapy
 pymongo
 scrapy-djangoitem
 django
+django-bootstrap3
+django-tables2
