@@ -15,4 +15,4 @@ class HouseTable(tables.Table):
                   'rooms', 'baths', 'url', 'has_seen',
                   'is_interesting', 'is_discard')
         attrs = {"class": "table-striped table-bordered"}
-        empty_text = "There are no customers matching the search criteria..."
+        empty_text = "There are no houses matching the search criteria..."
