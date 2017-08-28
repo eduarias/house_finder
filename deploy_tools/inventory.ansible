@@ -1,0 +1,5 @@
+[live]
+houses.ariasmonche.es ansible_become=yes ansible_ssh_user=eduarias version=master
+
+[staging]
+houses-staging.ariasmonche.es ansible_become=yes ansible_ssh_user=eduarias version=development
