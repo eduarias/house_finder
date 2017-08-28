@@ -12,7 +12,7 @@ class HouseTable(tables.Table):
         model = House
         fields = ('title', 'neighborhood',
                   'price', 'sqft_m2',
-                  'rooms', 'url', 'has_seen',
+                  'rooms', 'baths', 'url', 'has_seen',
                   'is_interesting', 'is_discard')
         attrs = {"class": "table-striped table-bordered"}
-        empty_text = "There are no customers matching the search criteria..."
+        empty_text = "There are no houses matching the search criteria..."
