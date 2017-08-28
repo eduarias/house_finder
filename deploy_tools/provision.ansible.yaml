@@ -106,7 +106,6 @@
         requirements: /home/eduarias/sites/{{ host }}/source/requirements.txt
         virtualenv: /home/eduarias/sites/{{ host }}/virtualenv
         virtualenv_python: python3
-#        virtualenv_command: venv
       tags:
         - deploy
 
@@ -115,6 +114,16 @@
         command: migrate
         app_path: /home/eduarias/sites/{{ host }}/source/house_finder
         virtualenv: /home/eduarias/sites/{{ host }}/virtualenv
+      tags:
+        - deploy
+
+    - name: Cron scrapy job
+      cron:
+        name: "scrapy"
+        minute: "0"
+        hour: "3,15"
+        job: "/home/eduarias/sites/{{ host }}/virtualenv/bin/python /home/eduarias/sites/home_crawler"
+      when: "'live' in group_names"
       tags:
         - deploy
 
