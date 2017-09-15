@@ -7,8 +7,32 @@
 
   tasks:
 
+    - name: Install python deploy environment
+      apt:
+        name:
+         - git
+         - python3
+         - python3-venv
+         - python3-dev
+         - nginx
+        state: present
+      tags:
+        - provision
+
+    - name: Install mySQL
+      apt:
+        name: mysql-server-5.7
+        state: present
+
     - name: Make sure required packages are installed
-      apt: pkg=nginx,git,python3,python3-venv,python3-dev,libxml2-dev,libxslt1-dev,zlib1g-dev,libffi-dev,libssl-dev state=present
+      apt:
+        name:
+          - libxml2-dev
+          - libxslt1-dev
+          - zlib1g-dev
+          - libffi-dev
+          - libssl-dev
+        state: present
       tags:
         - provision
 
