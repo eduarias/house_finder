@@ -19,11 +19,51 @@
       tags:
         - provision
 
+     # MySQL
     - name: Install mySQL
       apt:
-        name: mysql-server-5.7
+        name:
+          - mysql-server-5.7
+          - python-mysqldb
         state: present
 
+    - name: Generate new root password
+      command: openssl rand -hex 7 creates=/root/.my.cnf
+      register: mysql_new_root_pass
+
+    - name: Remove anonymous users
+      mysql_user: name="" state=absent
+      when: mysql_new_root_pass.changed
+
+    - name: Remove test database
+      mysql_db: name=test state=absent
+      when: mysql_new_root_pass.changed
+
+    - name: Output new root password
+      debug: msg="New root password is {{mysql_new_root_pass.stdout}}"
+      when: mysql_new_root_pass.changed
+
+    - name: Update root password
+      mysql_user: name=root host={{item}} password={{mysql_new_root_pass.stdout}}
+      with_items:
+      - "{{ ansible_hostname }}"
+      - 127.0.0.1
+      - ::1
+      - localhost
+      when: mysql_new_root_pass.changed
+
+    - name: Create my. cnf
+      template: src=templates/mysql/my.cnf.j2 dest=/root/.my.cnf
+      when: mysql_new_root_pass.changed
+
+##
+    - name: Create Django MySQL database
+      mysql_db: name=wordpress state=present
+
+    - name: Create Django MySQL user
+      mysql_user: name=django host=localhost password=bananas priv=django.*:ALL
+
+######################
     - name: Make sure required packages are installed
       apt:
         name:
@@ -46,7 +86,7 @@
         - provision
 
     - name: Add nginx config to sites-available
-      template: src=./nginx.conf.j2 dest=/etc/nginx/sites-available/{{ host }}
+      template: src=./templates/nginx.conf.j2 dest=/etc/nginx/sites-available/{{ host }}
       notify:
           - restart nginx
       tags:
@@ -64,7 +104,7 @@
 
     - name: Write gunicorn service script
       template:
-          src=./gunicorn.service.j2
+          src=./templates/gunicorn.service.j2
           dest=/etc/systemd/system/gunicorn-{{ host }}.service
       notify:
           - restart gunicorn
@@ -91,6 +131,8 @@
         key_file: /home/eduarias/.ssh/id_rsa
         accept_hostkey: yes
         force: yes
+      notify:
+        - restart gunicorn
       tags:
         - deploy
 
@@ -146,14 +188,18 @@
         name: "scrapy"
         minute: "0"
         hour: "3,15"
-        job: "/home/eduarias/sites/{{ host }}/virtualenv/bin/python /home/eduarias/sites/home_crawler"
+        job: "/home/eduarias/sites/{{ host }}/virtualenv/bin/python /home/eduarias/sites/{{ host }}/source/home_crawler.py"
       when: "'live' in group_names"
       tags:
         - deploy
 
-  handlers:
+handlers:
     - name: restart nginx
       service:  name=nginx state=restarted
+      tags:
+        - deploy
+        - restart
+        - provision
 
     - name: restart gunicorn
       systemd:
@@ -161,3 +207,7 @@
           daemon_reload=yes
           enabled=yes
           state=restarted
+      tags:
+        - deploy
+        - restart
+        - provision
