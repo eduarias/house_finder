@@ -1,0 +1,16 @@
+---
+- hosts: all
+  gather_facts: yes
+  become: true
+  roles:
+    - eduarias.python
+    - eduarias.git
+#    - eduarias.nginx
+    - eduarias.mysql
+    - eduarias.django
+
+
+  pre_tasks:
+    - name: Install python2
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-json)
+      changed_when: False

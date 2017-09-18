@@ -1,0 +1,103 @@
+---
+- include: mysql.yml
+  tags:
+    - mysql
+
+- user:
+    name: "{{ django_user }}"
+    createhome: yes
+
+- name: Make sure required packages are installed
+  apt:
+    name:
+      - libxml2-dev
+      - libxslt1-dev
+      - zlib1g-dev
+      - libffi-dev
+      - libssl-dev
+    state: present
+
+- name: Write gunicorn service script
+  template:
+      src=./templates/gunicorn.service.j2
+      dest=/etc/systemd/system/gunicorn-{{ host }}.service
+  notify:
+      - restart gunicorn
+
+- name: Create directory structure if necessary
+  file:
+    path: /home/{{ django_user }}/sites/{{ host }}/{{ item }}
+    state: directory
+    owner: "{{ django_user }}"
+    group: "{{ django_user }}"
+  with_items:
+    - virtualenv
+    - source
+
+- name: Create .ssh folder if doesn't exists
+  file:
+    path: /root/.ssh/
+    state: directory
+    mode: 0500
+
+- name: Create the SSH private key file
+  copy: content="{{ git_ssh_priv_key }}"
+        dest=/root/.ssh/id_rsa
+        mode=0600
+
+- name: Get house crawler from git
+  git:
+    repo: git@gitlab.com:eduarias/home_crawler.git
+    dest: /home/{{ django_user }}/sites/{{ host }}/source
+    version: "{{ git_branch }}"
+    key_file: /root/.ssh/id_rsa
+    accept_hostkey: yes
+    force: yes
+  notify:
+    - restart gunicorn
+
+- name: Update settings, debug
+  lineinfile:
+    path: /home/{{ django_user }}/sites/{{ host }}/source/house_finder/house_finder/settings.py
+    regexp: '^DEBUG ='
+    line: 'DEBUG = False'
+  become_user: "{{ django_user }}"
+
+- name: Update settings, allowed hosts
+  lineinfile:
+    path: /home/{{ django_user }}/sites/{{ host }}/source/house_finder/house_finder/settings.py
+    regexp: '^ALLOWED_HOSTS ='
+    line: 'ALLOWED_HOSTS = ["{{ host }}"]'
+
+#    - name: Update settings, secret key
+#      lineinfile:
+#        path: /home/{{ django_user }}/sites/{{ host }}/source/home_crawler/house_finder/house_finder/settings.py
+#        regexp: '^SECRET_KEY ='
+#        line: 'ALLOWED_HOSTS = ['{{ host }}']'
+#      tags:
+#        - deploy
+
+- name: Install virtualenv
+  pip:
+    name: virtualenv
+    executable: pip3
+
+- name: Create virtualenv and install pip requirements
+  pip:
+    requirements: /home/{{ django_user }}/sites/{{ host }}/source/requirements.txt
+    virtualenv: /home/{{ django_user }}/sites/{{ host }}/virtualenv
+    virtualenv_python: python3
+
+- name: Update database
+  django_manage:
+    command: migrate
+    app_path: /home/{{ django_user }}/sites/{{ host }}/source/house_finder
+    virtualenv: /home/{{ django_user }}/sites/{{ host }}/virtualenv
+
+- name: Cron scrapy job
+  cron:
+    name: "scrapy"
+    minute: "0"
+    hour: "3,15"
+    job: "/home/{{ django_user }}/sites/{{ host }}/virtualenv/bin/python /home/eduarias/sites/{{ host }}/source/home_crawler.py"
+  when: "'live' in group_names"

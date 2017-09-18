@@ -1,0 +1,5 @@
+---
+host: localhost
+django_user: django
+git_branch: master
+git_ssh_priv_key: /home/eduardo/tmp/ansible/ssh/id_rsa
