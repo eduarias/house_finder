@@ -41,7 +41,8 @@
     dest: /home/{{ django_user }}/sites/{{ host }}/source
     version: "{{ git_branch }}"
     force: yes
-  register: gitresult
+  register: git_result
+  changed_when: "git_result.after|default('after') != git_result.before|default('before')"
   notify:
     - restart gunicorn
 
@@ -50,13 +51,14 @@
     path: /home/{{ django_user }}/sites/{{ host }}/source/house_finder/house_finder/settings.py
     regexp: '^DEBUG ='
     line: 'DEBUG = False'
-  when: gitresult.remote_url_changed
+  when: git_result.changed
 
 - name: Update settings, allowed hosts
   lineinfile:
     path: /home/{{ django_user }}/sites/{{ host }}/source/house_finder/house_finder/settings.py
     regexp: '^ALLOWED_HOSTS ='
     line: 'ALLOWED_HOSTS = ["{{ host }}"]'
+  when: git_result.changed
 
 #    - name: Update settings, secret key
 #      lineinfile:
