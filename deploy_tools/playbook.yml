@@ -2,12 +2,17 @@
 - hosts: all
   gather_facts: yes
   become: true
+  vars_prompt:
+    - name: git_user
+      prompt: "Enter git user:"
+    - name: git_password
+      prompt: "Enter git password:"
   roles:
-    - eduarias.python
-    - eduarias.git
-    - eduarias.nginx
-    - eduarias.mysql
-    - eduarias.django
+    - role: eduarias.django
+      database_name: test
+      database_user: django
+      database_password: test1234
+
 
 
   pre_tasks:

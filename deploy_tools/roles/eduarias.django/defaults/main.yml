@@ -1,6 +1,9 @@
 ---
 host: localhost
 django_user: django
+database_name: django
+database_user: django
+database_password: test1234
 git_branch: master
 git_user: user
 git_password: password

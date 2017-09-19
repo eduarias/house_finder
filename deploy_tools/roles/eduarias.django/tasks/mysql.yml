@@ -1,6 +1,6 @@
 ---
 - name: Create Django MySQL database
-  mysql_db: name=django state=present
+  mysql_db: name="{{ database_name }}" state=present
 
 - name: Create Django MySQL user
-  mysql_user: name=django host=localhost password=bananas priv=django.*:ALL
+  mysql_user: name="{{ database_user }}" host=localhost password="{{ database_password }}" priv="{{ database_name }}".*:ALL

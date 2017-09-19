@@ -3,7 +3,8 @@
   tags:
     - mysql
 
-- user:
+- name: Create Django user
+  user:
     name: "{{ django_user }}"
     createhome: yes
 
