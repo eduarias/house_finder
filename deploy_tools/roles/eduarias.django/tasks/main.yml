@@ -34,25 +34,14 @@
     - virtualenv
     - source
 
-- name: Create .ssh folder if doesn't exists
-  file:
-    path: /root/.ssh/
-    state: directory
-    mode: 0500
-
-- name: Create the SSH private key file
-  copy: content="{{ git_ssh_priv_key }}"
-        dest=/root/.ssh/id_rsa
-        mode=0600
 
 - name: Get house crawler from git
   git:
-    repo: git@gitlab.com:eduarias/home_crawler.git
+    repo: "https://{{ git_user | urlencode }}:{{ git_password }}@gitlab.com/eduarias/home_crawler.git"
     dest: /home/{{ django_user }}/sites/{{ host }}/source
     version: "{{ git_branch }}"
-    key_file: /root/.ssh/id_rsa
-    accept_hostkey: yes
     force: yes
+  register: gitresult
   notify:
     - restart gunicorn
 
@@ -61,7 +50,7 @@
     path: /home/{{ django_user }}/sites/{{ host }}/source/house_finder/house_finder/settings.py
     regexp: '^DEBUG ='
     line: 'DEBUG = False'
-  become_user: "{{ django_user }}"
+  when: gitresult.remote_url_changed
 
 - name: Update settings, allowed hosts
   lineinfile:
