@@ -29,5 +29,3 @@ class House(models.Model):
     def __str__(self):
         return self.title
 
-    def was_found_recently(self):
-        return self.created_at >= timezone.now() - datetime.timedelta(days=1)

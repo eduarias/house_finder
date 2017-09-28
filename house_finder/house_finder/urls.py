@@ -16,7 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from houses.views import HousesListView
+
 urlpatterns = [
+    url(r'^$', HousesListView.as_view(), name='index'),
     url(r'^houses/', include('houses.urls')),
     url(r'^admin/', admin.site.urls),
 ]

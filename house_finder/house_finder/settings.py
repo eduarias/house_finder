@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'houses',
     'django_tables2',
     'bootstrap3',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
