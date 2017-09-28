@@ -1,0 +1,5 @@
+[web]
+houses-staging.ariasmonche.es  ansible_user=root
+
+[database]
+houses-staging.ariasmonche.es  ansible_user=root

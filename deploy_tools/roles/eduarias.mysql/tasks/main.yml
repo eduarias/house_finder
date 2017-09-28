@@ -6,8 +6,11 @@
       - python-mysqldb
     state: present
 
-- name: Generate new root password
-  command: openssl rand -hex 7 creates=/root/.my.cnf
+- name: New root password
+  template:
+    src: my.cnf.j2
+    dest: /root/.my.cnf
+    force: no
   register: mysql_new_root_pass
 
 - name: Remove anonymous users
@@ -18,19 +21,26 @@
   mysql_db: name=test state=absent
   when: mysql_new_root_pass.changed
 
-- name: Output new root password
-  debug: msg="New root password is {{mysql_new_root_pass.stdout}}"
-  when: mysql_new_root_pass.changed
-
 - name: Update root password
-  mysql_user: name=root host={{item}} password={{mysql_new_root_pass.stdout}}
+  mysql_user:
+    name: root
+    host: "{{item}}"
+    password: "{{ mysql_root_password }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
   with_items:
+  - "{{ inventory_hostname }}"
   - "{{ ansible_hostname }}"
+  - "{{ ansible_default_ipv4.address }}"
   - 127.0.0.1
   - ::1
   - localhost
   when: mysql_new_root_pass.changed
 
-- name: Create my.cnf
-  template: src=my.cnf.j2 dest=/root/.my.cnf
-  when: mysql_new_root_pass.changed
+- name: Comment out bind address in mysql configuration
+  replace:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^bind-address'
+    replace: '#bind-address'
+  notify:
+    - restart mysql

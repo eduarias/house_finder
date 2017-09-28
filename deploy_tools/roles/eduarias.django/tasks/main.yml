@@ -1,7 +1,7 @@
 ---
-- include: mysql.yml
-  tags:
-    - mysql
+#- include: mysql.yml
+#  tags:
+#    - mysql
 
 - name: Create Django user
   user:
@@ -16,18 +16,21 @@
       - zlib1g-dev
       - libffi-dev
       - libssl-dev
+      - libmysqlclient-dev
     state: present
+  become: true
 
 - name: Write gunicorn service script
   template:
       src=./templates/gunicorn.service.j2
-      dest=/etc/systemd/system/gunicorn-{{ host }}.service
+      dest=/etc/systemd/system/gunicorn-{{ inventory_hostname }}.service
+  become: true
   notify:
       - restart gunicorn
 
 - name: Create directory structure if necessary
   file:
-    path: /home/{{ django_user }}/sites/{{ host }}/{{ item }}
+    path: /home/{{ django_user }}/sites/{{ inventory_hostname }}/{{ item }}
     state: directory
     owner: "{{ django_user }}"
     group: "{{ django_user }}"
@@ -39,35 +42,41 @@
 - name: Get house crawler from git
   git:
     repo: "https://{{ git_user | urlencode }}:{{ git_password }}@gitlab.com/eduarias/home_crawler.git"
-    dest: /home/{{ django_user }}/sites/{{ host }}/source
+    dest: /home/{{ django_user }}/sites/{{ inventory_hostname }}/source
     version: "{{ git_branch }}"
     force: yes
-  register: git_result
-  changed_when: "git_result.after|default('after') != git_result.before|default('before')"
+#  register: git_result
+#  changed_when: "git_result.after|default('after') != git_result.before|default('before')"
   notify:
     - restart gunicorn
 
 - name: Update settings, debug
   lineinfile:
-    path: /home/{{ django_user }}/sites/{{ host }}/source/house_finder/house_finder/settings.py
+    path: /home/{{ django_user }}/sites/{{ inventory_hostname }}/source/house_finder/house_finder/settings.py
     regexp: '^DEBUG ='
     line: 'DEBUG = False'
-  when: git_result.changed
+#  when: git_result.changed
+  when: "'live' in stage"
 
 - name: Update settings, allowed hosts
   lineinfile:
-    path: /home/{{ django_user }}/sites/{{ host }}/source/house_finder/house_finder/settings.py
+    path: /home/{{ django_user }}/sites/{{ inventory_hostname }}/source/house_finder/house_finder/settings.py
     regexp: '^ALLOWED_HOSTS ='
-    line: 'ALLOWED_HOSTS = ["{{ host }}"]'
-  when: git_result.changed
+    line: 'ALLOWED_HOSTS = ["{{ inventory_hostname }}"]'
+#  when: git_result.changed
 
-#    - name: Update settings, secret key
-#      lineinfile:
-#        path: /home/{{ django_user }}/sites/{{ host }}/source/home_crawler/house_finder/house_finder/settings.py
-#        regexp: '^SECRET_KEY ='
-#        line: 'ALLOWED_HOSTS = ['{{ host }}']'
-#      tags:
-#        - deploy
+- name: Update settings, secret key
+  lineinfile:
+    path: /home/{{ django_user }}/sites/{{ inventory_hostname }}/source/house_finder/house_finder/settings.py
+    regexp: '^SECRET_KEY ='
+    line: "SECRET_KEY = '{{ django_secret_key }}'"
+#  when: git_result.changed
+
+- name: Add mysql config file
+  template: src=my.cnf.j2 dest=/home/{{ django_user }}/sites/{{ inventory_hostname }}/source/house_finder/my.cnf
+  become: true
+  notify:
+      - restart nginx
 
 - name: Install virtualenv
   pip:
@@ -76,20 +85,23 @@
 
 - name: Create virtualenv and install pip requirements
   pip:
-    requirements: /home/{{ django_user }}/sites/{{ host }}/source/requirements.txt
-    virtualenv: /home/{{ django_user }}/sites/{{ host }}/virtualenv
+    requirements: /home/{{ django_user }}/sites/{{ inventory_hostname }}/source/requirements.txt
+    virtualenv: /home/{{ django_user }}/sites/{{ inventory_hostname }}/virtualenv
     virtualenv_python: python3
+
+- include: mysql.yml
 
 - name: Update database
   django_manage:
     command: migrate
-    app_path: /home/{{ django_user }}/sites/{{ host }}/source/house_finder
-    virtualenv: /home/{{ django_user }}/sites/{{ host }}/virtualenv
+    app_path: /home/{{ django_user }}/sites/{{ inventory_hostname }}/source/house_finder
+    virtualenv: /home/{{ django_user }}/sites/{{ inventory_hostname }}/virtualenv
 
 - name: Cron scrapy job
   cron:
     name: "scrapy"
     minute: "0"
     hour: "3,15"
-    job: "/home/{{ django_user }}/sites/{{ host }}/virtualenv/bin/python /home/eduarias/sites/{{ host }}/source/home_crawler.py"
-  when: "'live' in group_names"
+    job: "/home/{{ django_user }}/sites/{{ inventory_hostname }}/virtualenv/bin/python /home/eduarias/sites/{{ inventory_hostname }}/source/home_crawler.py"
+  when: "'live' in stage"
+  become: true

@@ -1,21 +1,17 @@
 ---
-- hosts: all
+- hosts: database
+  vars_files:
+    - "{{ inventory_dir }}/secrets.yml"
+  become: true
+  roles:
+    - role: eduarias.mysql
+
+
+- hosts: web
+  vars_files:
+    - "{{ inventory_dir }}/secrets.yml"
   gather_facts: yes
   become: true
-  vars_prompt:
-    - name: git_user
-      prompt: "Enter git user:"
-    - name: git_password
-      prompt: "Enter git password:"
   roles:
     - role: eduarias.django
-      database_name: test
-      database_user: django
-      database_password: test1234
 
-
-
-  pre_tasks:
-    - name: Install python2
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-      changed_when: False

@@ -1,0 +1,3 @@
+---
+stage: live
+django_user: django

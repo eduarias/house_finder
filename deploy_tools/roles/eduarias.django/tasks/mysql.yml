@@ -1,6 +1,19 @@
 ---
 - name: Create Django MySQL database
-  mysql_db: name="{{ database_name }}" state=present
+  mysql_db:
+    name: "{{ database_name }}"
+    state: present
 
 - name: Create Django MySQL user
-  mysql_user: name="{{ database_user }}" host=localhost password="{{ database_password }}" priv="{{ database_name }}".*:ALL
+  mysql_user:
+    name: "{{ database_user }}"
+    host: "{{ item }}"
+    password: "{{ database_password }}"
+    priv: "{{ database_name }}.*:ALL"
+  with_items:
+    - "{{ inventory_hostname }}"
+    - "{{ ansible_hostname }}"
+    - "{{ ansible_default_ipv4.address }}"
+    - 127.0.0.1
+    - ::1
+    - localhost

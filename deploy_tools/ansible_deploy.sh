@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-ansible-playbook -i inventory.ansible provision.ansible.yaml --limit=staging --tags deploy --ask-become-pass
+ansible-playbook playbook.yml -i hosts/live/inventory --ask-vault-pass

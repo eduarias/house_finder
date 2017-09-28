@@ -1,4 +1,0 @@
----
-
-ansible_become: yes
-ansible_ssh_user: eduarias

@@ -1,9 +1,12 @@
 ---
-host: localhost
 django_user: django
+django_secret_key: _$u50@+t$279$=t_=jsanzah02@#)zz!+s8q*l-!&n(e8$rxu(
+database_root_password: test
+database_host: localhost
 database_name: django
 database_user: django
 database_password: test1234
 git_branch: master
 git_user: user
 git_password: password
+stage: test

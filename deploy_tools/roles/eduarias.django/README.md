@@ -1,22 +1,32 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+Django installation for House crawler application.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+For Ubuntu 16.04, ansible requires python-minimal to be installed.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+- django_user: User to install Django application
+- django_secret_key: Secret key to avoid CSFR
+- database_root_password
+- database_host
+- database_name
+- database_user
+- database_password
+- git_branch
+- git_user
+- git_password
+- stage: Installation stage (live or staging)
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+Local roles as dependencies.
 
 Example Playbook
 ----------------
@@ -25,7 +35,18 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
+        - role: eduarias.django
+          django_user: django
+          django_secret_key: _$u50@+t$279$=t_=jsanzah02@#)zz!+s8q*l-!&n(e8$rxu(
+          database_root_password: test
+          database_host: localhost
+          database_name: django
+          database_user: django
+          database_password: test1234
+          git_branch: master
+          git_user: user
+          git_password: password
+          stage: test
 
 License
 -------

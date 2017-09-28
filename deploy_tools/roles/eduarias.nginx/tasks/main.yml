@@ -7,7 +7,6 @@
      - nginx
     state: present
   become: true
-  become_method: sudo
 
 - name: Allow long hostnames in nginx
   lineinfile:
@@ -15,16 +14,19 @@
     regexp: '(\s+)#? ?server_names_hash_bucket_size'
     backrefs: yes
     line: '\1server_names_hash_bucket_size 64;'
+  become: true
 
 - name: Add nginx config to sites-available
-  template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/{{ host }}
+  template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/{{ inventory_hostname }}
+  become: true
   notify:
       - restart nginx
 
 - name: Add symlink in nginx sites-enabled
   file:
-      src: /etc/nginx/sites-available/{{ host }}
-      dest: /etc/nginx/sites-enabled/{{ host }}
+      src: /etc/nginx/sites-available/{{ inventory_hostname }}
+      dest: /etc/nginx/sites-enabled/{{ inventory_hostname }}
       state: link
+  become: true
   notify:
       - restart nginx
