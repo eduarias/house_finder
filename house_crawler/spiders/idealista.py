@@ -14,11 +14,7 @@ class IdealistaSpider(BaseSpider):
     xpath_list_item_price = './/span[@class="item-price"]/text()'
     xpath_list_next = "//a[@class='icon-arrow-right-after']"
 
-    start_urls_neighborhoods = {
-        'Sant Gervasi - Bonanova': 'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/',
-        # 'Ciudad Jardín': 'https://www.idealista.com/alquiler-viviendas/las-palmas-de-gran-canaria/centro/ciudad-jardin/',
-        # 'Arenales - Lugo': 'https://www.idealista.com/alquiler-viviendas/las-palmas-de-gran-canaria/centro/arenales-lugo-avda-maritima/',
-    }
+    provider = 'idealista'
 
     def parse_house(self, response):
 

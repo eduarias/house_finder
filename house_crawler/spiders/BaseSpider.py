@@ -3,6 +3,8 @@ from abc import abstractmethod
 from scrapy.spiders import CrawlSpider
 from scrapy.http import Request
 
+from houses.models import StartURL, HousesProvider
+
 
 class BaseSpider(CrawlSpider):
 
@@ -12,7 +14,7 @@ class BaseSpider(CrawlSpider):
     xpath_list_item_price = None
     xpath_list_next = None
 
-    start_urls_neighborhoods = None
+    provider = None
 
     def parse_houses_list(self, response):
         """
@@ -60,7 +62,8 @@ class BaseSpider(CrawlSpider):
             return None
 
     def start_requests(self):
-        for neighborhood, url in self.start_urls_neighborhoods.items():
-            yield Request(url, meta={'neighborhood': neighborhood}, dont_filter=True)
+        _house_provider = HousesProvider.objects.get(name=self.provider)
+        for start_url in StartURL.objects.filter(provider=_house_provider):
+            yield Request(start_url.url, meta={'neighborhood': start_url.neighborhood}, dont_filter=True)
 
     parse_start_url = parse_houses_list
