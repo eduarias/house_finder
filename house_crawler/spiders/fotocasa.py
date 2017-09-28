@@ -14,11 +14,7 @@ class FotocasaSpider(BaseSpider):
     xpath_list_item_price = './/span[@class="re-Card-price"]/text()'
     xpath_list_next = '//a[@class="sui-Pagination-link" and text()=">"]'
 
-    start_urls_neighborhoods = {
-        'Sarriá - Sant Gervasi': 'http://www.fotocasa.es/es/alquiler/casas/barcelona-capital/sarria-sant-gervasi/l',
-        # 'Ciudad Jardín': 'https://www.fotocasa.es/es/alquiler/casas/las-palmas-de-gran-canaria/ciudad-jardin/l',
-        # 'Arenales - Lugo': 'https://www.fotocasa.es/es/alquiler/casas/las-palmas-de-gran-canaria/arenales-lugo-avda-maritima/l',
-    }
+    provider = 'fotocasa'
 
     def parse_house(self, response):
 

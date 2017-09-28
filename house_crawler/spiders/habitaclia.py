@@ -14,11 +14,7 @@ class HabitacliaSpider(BaseSpider):
     xpath_list_item_price = './/span[@itemprop="price"]/text()'
     xpath_list_next = '//a[@class="siguiente"]/@href'
 
-    start_urls_neighborhoods = {
-        'Sant Gervasi - Bonanova': 'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___bonanova/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',
-        'Sant Gervasi - Galvany': 'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___galvany/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',
-        # 'Las Palmas': 'https://www.habitaclia.com/alquiler-palmas_de_gran_canaria.htm',
-    }
+    provider = 'habitaclia'
 
     def parse_house(self, response):
         info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature"]/strong/text()'

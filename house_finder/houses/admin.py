@@ -1,5 +1,6 @@
 from django.contrib import admin
 
-from .models import House
+from .models import House, StartURL, HousesProvider
 
-admin.site.register(House)
+house_models = [House, StartURL, HousesProvider]
+admin.site.register(house_models)
