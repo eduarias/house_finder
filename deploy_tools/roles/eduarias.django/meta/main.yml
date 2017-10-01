@@ -1,0 +1,23 @@
+galaxy_info:
+  author: Eduardo Arias
+  description: Installation script for django application
+
+  license: GPLv3
+
+  min_ansible_version: 2.3
+
+  platforms:
+   - name: Ubuntu
+     versions:
+      - trusty
+      - xenial
+
+  galaxy_tags:
+    - django
+    - mysql
+    - gunicorn
+
+dependencies:
+  - eduarias.python3
+  - eduarias.git
+  - eduarias.nginx

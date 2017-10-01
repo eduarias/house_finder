@@ -1,23 +1,19 @@
 from django.views import generic
-from django_tables2 import RequestConfig
+from django_filters.views import FilterView
+from django_tables2 import SingleTableView
 
 from .models import House
 from .tables import HouseTable
+from .filters import HouseFilter
 
 
-class HousesListView(generic.ListView):
+class HousesListView(FilterView, SingleTableView):
     model = House
     template_name = 'houses/houses_list2.html'
     context_object_name = 'houses'
     ordering = ['price']
-
-    def get_context_data(self, **kwargs):
-        context = super(HousesListView, self).get_context_data(**kwargs)
-        # context['nav_customer'] = True
-        table = HouseTable(House.objects.order_by('price'))
-        RequestConfig(self.request, paginate={'per_page': 20}).configure(table)
-        context['table'] = table
-        return context
+    filterset_class = HouseFilter
+    table_class = HouseTable
 
 
 class DetailView(generic.DetailView):

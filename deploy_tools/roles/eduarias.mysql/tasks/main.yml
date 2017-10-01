@@ -1,0 +1,46 @@
+---
+- name: Install mySQL
+  apt:
+    name:
+      - mysql-server-5.7
+      - python-mysqldb
+    state: present
+
+- name: New root password
+  template:
+    src: my.cnf.j2
+    dest: /root/.my.cnf
+    force: no
+  register: mysql_new_root_pass
+
+- name: Remove anonymous users
+  mysql_user: name="" state=absent
+  when: mysql_new_root_pass.changed
+
+- name: Remove test database
+  mysql_db: name=test state=absent
+  when: mysql_new_root_pass.changed
+
+- name: Update root password
+  mysql_user:
+    name: root
+    host: "{{item}}"
+    password: "{{ mysql_root_password }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
+  with_items:
+  - "{{ inventory_hostname }}"
+  - "{{ ansible_hostname }}"
+  - "{{ ansible_default_ipv4.address }}"
+  - 127.0.0.1
+  - ::1
+  - localhost
+  when: mysql_new_root_pass.changed
+
+- name: Comment out bind address in mysql configuration
+  replace:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^bind-address'
+    replace: '#bind-address'
+  notify:
+    - restart mysql

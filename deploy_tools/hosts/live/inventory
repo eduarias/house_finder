@@ -1,0 +1,5 @@
+[web]
+houses.ariasmonche.es  ansible_user=root
+
+[database]
+houses.ariasmonche.es  ansible_user=root

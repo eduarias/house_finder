@@ -1,0 +1,15 @@
+[Unit]
+Description=Gunicorn server for {{ inventory_hostname }}
+
+[Service]
+User={{ django_user }}
+WorkingDirectory=/home/{{ django_user }}/sites/{{ inventory_hostname }}/source/house_finder
+Restart=on-failure
+ExecStart=/home/{{ django_user }}/sites/{{ inventory_hostname }}/virtualenv/bin/gunicorn \
+    --bind unix:/tmp/{{ inventory_hostname }}.socket \
+    --access-logfile ../access.log \
+    --error-logfile ../error.log \
+    house_finder.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
