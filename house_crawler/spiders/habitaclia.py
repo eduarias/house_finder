@@ -25,9 +25,8 @@ class HabitacliaSpider(BaseSpider):
             address = None
 
         house = {'site_id': clean_int(response.xpath('//span[@class="detail-id"]/text()').extract_first()),
-                 'website': 'Habitaclia',
                  'title': response.xpath('//h1/text()').extract_first(),
-                 'neighborhood': response.meta['neighborhood'],
+                 'start_url': response.meta['start_url'],
                  'description': response.xpath('//p[@id="js-detail-description"]/text()').extract_first().strip(),
                  'url': response.url.split('?')[0],
                  'price': response.xpath("//div[@class='price']/span[@itemprop='price']/text()").extract_first(),
