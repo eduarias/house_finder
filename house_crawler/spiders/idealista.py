@@ -31,9 +31,8 @@ class IdealistaSpider(BaseSpider):
             baths += toilets
 
         house = {'site_id': list(filter(None, response.url.split('/')))[-1],
-                 'website': 'Idealista',
                  'title': response.xpath("//h1/span/text()").extract_first(),
-                 'neighborhood': response.meta['neighborhood'],
+                 'start_url': response.meta['start_url'],
                  'description': response.
                      xpath('//section[@id="details"]//div[@class="adCommentsLanguage expandable"]/text()').
                      extract_first(),

@@ -24,20 +24,20 @@ class BaseSpider(CrawlSpider):
         """
 
         houses = response.xpath(self.xpath_list)
-        neighborhood = response.meta.get('neighborhood', None)
+        start_url = response.meta.get('start_url', None)
 
         for house in houses.xpath(self.xpath_list_item):
             url = house.xpath(self.xpath_list_item_href).extract_first()
             house_url = self.get_url(response, url)
 
             if not self.is_url_in_db(house_url):
-                yield response.follow(house_url, meta={'neighborhood': neighborhood}, callback=self.parse_house)
+                yield response.follow(house_url, meta={'start_url': start_url}, callback=self.parse_house)
             else:
                 price = house.xpath(self.xpath_list_item_price).extract_first()
                 self.update_price(house_url, price)
         next_page = response.xpath(self.xpath_list_next).extract_first()
         if next_page is not None:
-            yield response.follow(next_page, meta={'neighborhood': neighborhood}, callback=self.parse_houses_list)
+            yield response.follow(next_page, meta={'start_url': start_url}, callback=self.parse_houses_list)
 
     @abstractmethod
     def get_url(self, response, url):
@@ -64,6 +64,6 @@ class BaseSpider(CrawlSpider):
     def start_requests(self):
         _house_provider = HousesProvider.objects.get(name=self.provider)
         for start_url in StartURL.objects.filter(provider=_house_provider):
-            yield Request(start_url.url, meta={'neighborhood': start_url.neighborhood}, dont_filter=True)
+            yield Request(start_url.url, meta={'start_url': start_url}, dont_filter=True)
 
     parse_start_url = parse_houses_list
