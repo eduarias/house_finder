@@ -1,0 +1,8 @@
+---
+- name: Install Git from repositories
+  apt:
+    pkg: git
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+  become: true

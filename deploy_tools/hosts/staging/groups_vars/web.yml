@@ -1,0 +1,4 @@
+---
+git_branch: development
+database_name: houses_staging
+database_host: "{{ groups['database'][0] }}"

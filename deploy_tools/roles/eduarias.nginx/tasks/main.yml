@@ -1,0 +1,32 @@
+---
+- name: Install Nginx
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    name:
+     - nginx
+    state: present
+  become: true
+
+- name: Allow long hostnames in nginx
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    regexp: '(\s+)#? ?server_names_hash_bucket_size'
+    backrefs: yes
+    line: '\1server_names_hash_bucket_size 64;'
+  become: true
+
+- name: Add nginx config to sites-available
+  template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/{{ inventory_hostname }}
+  become: true
+  notify:
+      - restart nginx
+
+- name: Add symlink in nginx sites-enabled
+  file:
+      src: /etc/nginx/sites-available/{{ inventory_hostname }}
+      dest: /etc/nginx/sites-enabled/{{ inventory_hostname }}
+      state: link
+  become: true
+  notify:
+      - restart nginx
