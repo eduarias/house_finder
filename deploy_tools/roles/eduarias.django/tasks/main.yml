@@ -26,13 +26,14 @@
 
 - name: Create directory structure if necessary
   file:
-    path: "{{ host_folder }}/{{ item }}"
+    path: "{{ item }}"
     state: directory
     owner: "{{ django_user }}"
     group: "{{ django_user }}"
   with_items:
-    - virtualenv
-    - source
+    - "{{ virtualenv_folder }}"
+    - "{{ source_folder }}"
+    - "{{ logs_folder }}"
 
 - name: Get house crawler from git
   git:
