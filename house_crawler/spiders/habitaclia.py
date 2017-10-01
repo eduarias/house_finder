@@ -14,11 +14,7 @@ class HabitacliaSpider(BaseSpider):
     xpath_list_item_price = './/span[@itemprop="price"]/text()'
     xpath_list_next = '//a[@class="siguiente"]/@href'
 
-    start_urls_neighborhoods = {
-        'Sant Gervasi - Bonanova': 'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___bonanova/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',
-        'Sant Gervasi - Galvany': 'https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___galvany/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm',
-        # 'Las Palmas': 'https://www.habitaclia.com/alquiler-palmas_de_gran_canaria.htm',
-    }
+    provider = 'habitaclia'
 
     def parse_house(self, response):
         info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature"]/strong/text()'
@@ -29,9 +25,8 @@ class HabitacliaSpider(BaseSpider):
             address = None
 
         house = {'site_id': clean_int(response.xpath('//span[@class="detail-id"]/text()').extract_first()),
-                 'website': 'Habitaclia',
                  'title': response.xpath('//h1/text()').extract_first(),
-                 'neighborhood': response.meta['neighborhood'],
+                 'start_url': response.meta['start_url'],
                  'description': response.xpath('//p[@id="js-detail-description"]/text()').extract_first().strip(),
                  'url': response.url.split('?')[0],
                  'price': response.xpath("//div[@class='price']/span[@itemprop='price']/text()").extract_first(),
