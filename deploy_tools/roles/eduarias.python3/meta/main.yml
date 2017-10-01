@@ -1,0 +1,20 @@
+galaxy_info:
+  author: Eduardo Arias
+  description: Python with libraries necessaries for installing libraries and virtualenv
+
+  # If the issue tracker for your role is not on github, uncomment the
+  # next line and provide a value
+  # issue_tracker_url: http://example.com/issue/tracker
+
+  license: BSD
+
+  min_ansible_version: 1.2
+
+  platforms:
+   - name: Ubuntu
+     versions:
+      - trusty
+      - xenial
+
+  galaxy_tags:
+    - python

@@ -1,0 +1,4 @@
+---
+git_branch: master
+database_name: houses_prod
+database_host: "{{ groups['database'][0] }}"
