@@ -1,7 +1,10 @@
 ---
-#- include: mysql.yml
-#  tags:
-#    - mysql
+vars:
+  home_folder: /home/{{ django_user }}/sites/
+  host_folder: {{ home_site }}/{{ inventory_hostname }}
+  source_folder: {{ host_folder }}/source
+  virtualenv_folder: {{ host_folder }}/virtualenv
+  settings_file: {{ source_folder }}/house_finder/house_finder/settings.py
 
 - name: Create Django user
   user:
@@ -30,7 +33,7 @@
 
 - name: Create directory structure if necessary
   file:
-    path: /home/{{ django_user }}/sites/{{ inventory_hostname }}/{{ item }}
+    path: {{ host_folder }}/{{ item }}
     state: directory
     owner: "{{ django_user }}"
     group: "{{ django_user }}"
@@ -38,11 +41,10 @@
     - virtualenv
     - source
 
-
 - name: Get house crawler from git
   git:
     repo: "https://{{ git_user | urlencode }}:{{ git_password }}@gitlab.com/eduarias/home_crawler.git"
-    dest: /home/{{ django_user }}/sites/{{ inventory_hostname }}/source
+    dest: {{ source_folder }}
     version: "{{ git_branch }}"
     force: yes
 #  register: git_result
@@ -52,7 +54,7 @@
 
 - name: Update settings, debug
   lineinfile:
-    path: /home/{{ django_user }}/sites/{{ inventory_hostname }}/source/house_finder/house_finder/settings.py
+    path: {{ settings_file }}
     regexp: '^DEBUG ='
     line: 'DEBUG = False'
 #  when: git_result.changed
@@ -60,20 +62,20 @@
 
 - name: Update settings, allowed hosts
   lineinfile:
-    path: /home/{{ django_user }}/sites/{{ inventory_hostname }}/source/house_finder/house_finder/settings.py
+    path: {{ settings_file }}
     regexp: '^ALLOWED_HOSTS ='
     line: 'ALLOWED_HOSTS = ["{{ inventory_hostname }}"]'
 #  when: git_result.changed
 
 - name: Update settings, secret key
   lineinfile:
-    path: /home/{{ django_user }}/sites/{{ inventory_hostname }}/source/house_finder/house_finder/settings.py
+    path: {{ settings_file }}
     regexp: '^SECRET_KEY ='
     line: "SECRET_KEY = '{{ django_secret_key }}'"
 #  when: git_result.changed
 
 - name: Add mysql config file
-  template: src=my.cnf.j2 dest=/home/{{ django_user }}/sites/{{ inventory_hostname }}/source/house_finder/my.cnf
+  template: src=my.cnf.j2 dest={{ source_folder }}/house_finder/my.cnf
   become: true
   notify:
       - restart nginx
@@ -85,8 +87,8 @@
 
 - name: Create virtualenv and install pip requirements
   pip:
-    requirements: /home/{{ django_user }}/sites/{{ inventory_hostname }}/source/requirements.txt
-    virtualenv: /home/{{ django_user }}/sites/{{ inventory_hostname }}/virtualenv
+    requirements: {{ source_folder }}/requirements.txt
+    virtualenv: {{ virtualenv_folder }}
     virtualenv_python: python3
 
 - include: mysql.yml
@@ -94,14 +96,21 @@
 - name: Update database
   django_manage:
     command: migrate
-    app_path: /home/{{ django_user }}/sites/{{ inventory_hostname }}/source/house_finder
-    virtualenv: /home/{{ django_user }}/sites/{{ inventory_hostname }}/virtualenv
+    app_path: {{ source_folder }}/house_finder
+    virtualenv: {{ virtualenv_folder }}
+
+- name: Enter basic data in database
+  django_manage:
+    command: loaddata
+    app_path: {{ source_folder }}/house_finder
+    virtualenv: {{ virtualenv_folder }}
+    fixture: houses/fixture/base_data.json
 
 - name: Cron scrapy job
   cron:
     name: "scrapy"
     minute: "0"
     hour: "3,15"
-    job: "/home/{{ django_user }}/sites/{{ inventory_hostname }}/virtualenv/bin/python /home/eduarias/sites/{{ inventory_hostname }}/source/home_crawler.py"
+    job: "{{ virtualenv_folder }}/bin/python {{ source_folder }}/home_crawler.py"
   when: "'live' in stage"
   become: true
