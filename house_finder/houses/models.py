@@ -3,11 +3,26 @@ from django.db import models
 from django.utils import timezone
 
 
+class HousesProvider(models.Model):
+    name = models.CharField(max_length=25, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class StartURL(models.Model):
+    city = models.CharField(max_length=100)
+    neighborhood = models.CharField(max_length=100)
+    provider = models.ForeignKey(HousesProvider)
+    url = models.URLField(unique=True)
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.provider, self.neighborhood)
+
+
 class House(models.Model):
     site_id = models.CharField(max_length=100)
-    website = models.CharField(max_length=100)
     title = models.CharField(max_length=200)
-    neighborhood = models.CharField(max_length=100)
     description = models.TextField(default=None)
     price = models.IntegerField(null=True)
     url = models.URLField(unique=True)
@@ -22,10 +37,14 @@ class House(models.Model):
     notes = models.TextField(default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        unique_together = ('site_id', 'website',)
+    start_url = models.ForeignKey(StartURL, null=True)
 
     def __str__(self):
         return self.title
 
+    @property
+    def provider(self):
+        if self.start_url:
+            return self.start_url.provider.name.title()
+        else:
+            return 'Link'
