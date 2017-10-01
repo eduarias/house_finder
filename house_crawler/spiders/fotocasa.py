@@ -14,18 +14,13 @@ class FotocasaSpider(BaseSpider):
     xpath_list_item_price = './/span[@class="re-Card-price"]/text()'
     xpath_list_next = '//a[@class="sui-Pagination-link" and text()=">"]'
 
-    start_urls_neighborhoods = {
-        'Sarriá - Sant Gervasi': 'http://www.fotocasa.es/es/alquiler/casas/barcelona-capital/sarria-sant-gervasi/l',
-        # 'Ciudad Jardín': 'https://www.fotocasa.es/es/alquiler/casas/las-palmas-de-gran-canaria/ciudad-jardin/l',
-        # 'Arenales - Lugo': 'https://www.fotocasa.es/es/alquiler/casas/las-palmas-de-gran-canaria/arenales-lugo-avda-maritima/l',
-    }
+    provider = 'fotocasa'
 
     def parse_house(self, response):
 
         house = {'site_id': clean_int(self.extract_from_xpath(response, '//div[@id="detailReference"]/text()')),
-                'website': 'Fotocasa',
                 'title': response.xpath('//h1[@class="property-title"]/text()').extract_first().strip(),
-                'neighborhood': response.meta['neighborhood'],
+                'start_url': response.meta['start_url'],
                 'description': response.xpath('//div[@class="detail-section-content"]/p/text()').extract_first(),
                 'url': response.url,
                 'price': response.xpath('//span[@id="detail-quickaccess_property_price"]/b/text()').extract_first(),

@@ -14,11 +14,7 @@ class IdealistaSpider(BaseSpider):
     xpath_list_item_price = './/span[@class="item-price"]/text()'
     xpath_list_next = "//a[@class='icon-arrow-right-after']"
 
-    start_urls_neighborhoods = {
-        'Sant Gervasi - Bonanova': 'https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/',
-        # 'Ciudad Jardín': 'https://www.idealista.com/alquiler-viviendas/las-palmas-de-gran-canaria/centro/ciudad-jardin/',
-        # 'Arenales - Lugo': 'https://www.idealista.com/alquiler-viviendas/las-palmas-de-gran-canaria/centro/arenales-lugo-avda-maritima/',
-    }
+    provider = 'idealista'
 
     def parse_house(self, response):
 
@@ -35,9 +31,8 @@ class IdealistaSpider(BaseSpider):
             baths += toilets
 
         house = {'site_id': list(filter(None, response.url.split('/')))[-1],
-                 'website': 'Idealista',
                  'title': response.xpath("//h1/span/text()").extract_first(),
-                 'neighborhood': response.meta['neighborhood'],
+                 'start_url': response.meta['start_url'],
                  'description': response.
                      xpath('//section[@id="details"]//div[@class="adCommentsLanguage expandable"]/text()').
                      extract_first(),
