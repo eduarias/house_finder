@@ -2,6 +2,7 @@
 - hosts: database
   vars_files:
     - "{{ inventory_dir }}/secrets.yml"
+    - "{{ inventory_dir }}/../shared_secrets.yml"
   become: true
   roles:
     - role: eduarias.mysql
@@ -10,6 +11,7 @@
 - hosts: web
   vars_files:
     - "{{ inventory_dir }}/secrets.yml"
+    - "{{ inventory_dir }}/../shared_secrets.yml"
   gather_facts: yes
   become: true
   roles:

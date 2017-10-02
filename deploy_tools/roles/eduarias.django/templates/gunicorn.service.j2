@@ -7,8 +7,8 @@ WorkingDirectory=/home/{{ django_user }}/sites/{{ inventory_hostname }}/source/h
 Restart=on-failure
 ExecStart=/home/{{ django_user }}/sites/{{ inventory_hostname }}/virtualenv/bin/gunicorn \
     --bind unix:/tmp/{{ inventory_hostname }}.socket \
-    --access-logfile ../access.log \
-    --error-logfile ../error.log \
+    --access-logfile {{ logs_folder }}/access.log \
+    --error-logfile {{ logs_folder }}/error.log \
     house_finder.wsgi:application
 
 [Install]

@@ -1,4 +1,4 @@
 ---
-git_branch: development
+git_branch: develop
 database_name: houses_staging
 database_host: "{{ groups['database'][0] }}"

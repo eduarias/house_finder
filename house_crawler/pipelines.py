@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-import pymongo
 from django.db import IntegrityError
-from scrapy.conf import settings
-from scrapy.exceptions import DropItem
 from houses.models import House
 import logging
 from datetime import datetime
@@ -77,39 +74,3 @@ class DjangoPipeline(HouseBasePipeline):
         logging.info('Url already in database: {}, updating price: {}'.format(url, price))
         house.price = price
         house.save()
-
-
-class MongoDBPipeline(HouseBasePipeline):
-    def __init__(self):
-        connection = pymongo.MongoClient(
-            settings['MONGODB_SERVER'],
-            settings['MONGODB_PORT']
-        )
-        db = connection[settings['MONGODB_DB']]
-        self.collection = db[settings['MONGODB_COLLECTION']]
-
-    def post_process_item(self, item, spider):
-        today = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-        # Minimum data scraped to be in DB
-        basic_data = ['price', 'sqft_m2', 'rooms']
-        for data in basic_data:
-            if not item[data]:
-                raise DropItem("Missing data: {}!".format(data))
-
-        item_to_db = dict(item)
-        item_to_db['updated_at'] = today
-
-        self.collection.update({'url': item['url']},
-                               {'$set': item_to_db,
-                                '$setOnInsert': {'created_at': today}},
-                               upsert=True)
-        logging.debug("House {} added to MongoDB database!".format(item['url']))
-
-        return item
-
-    def is_url_in_db(self, url):
-        self.collection.find_one({"url": url})
-
-    def update_price(self, url, price):
-        self.collection.update({'url': 'url'}, {'$set': {'price': price}})

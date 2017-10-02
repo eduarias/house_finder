@@ -1,11 +1,4 @@
 ---
-vars:
-  home_folder: /home/{{ django_user }}/sites/
-  host_folder: {{ home_site }}/{{ inventory_hostname }}
-  source_folder: {{ host_folder }}/source
-  virtualenv_folder: {{ host_folder }}/virtualenv
-  settings_file: {{ source_folder }}/house_finder/house_finder/settings.py
-
 - name: Create Django user
   user:
     name: "{{ django_user }}"
@@ -33,18 +26,19 @@ vars:
 
 - name: Create directory structure if necessary
   file:
-    path: {{ host_folder }}/{{ item }}
+    path: "{{ item }}"
     state: directory
     owner: "{{ django_user }}"
     group: "{{ django_user }}"
   with_items:
-    - virtualenv
-    - source
+    - "{{ virtualenv_folder }}"
+    - "{{ source_folder }}"
+    - "{{ logs_folder }}"
 
 - name: Get house crawler from git
   git:
     repo: "https://{{ git_user | urlencode }}:{{ git_password }}@gitlab.com/eduarias/home_crawler.git"
-    dest: {{ source_folder }}
+    dest: "{{ source_folder }}"
     version: "{{ git_branch }}"
     force: yes
 #  register: git_result
@@ -54,7 +48,7 @@ vars:
 
 - name: Update settings, debug
   lineinfile:
-    path: {{ settings_file }}
+    path: "{{ settings_file }}"
     regexp: '^DEBUG ='
     line: 'DEBUG = False'
 #  when: git_result.changed
@@ -62,20 +56,20 @@ vars:
 
 - name: Update settings, allowed hosts
   lineinfile:
-    path: {{ settings_file }}
+    path: "{{ settings_file }}"
     regexp: '^ALLOWED_HOSTS ='
     line: 'ALLOWED_HOSTS = ["{{ inventory_hostname }}"]'
 #  when: git_result.changed
 
 - name: Update settings, secret key
   lineinfile:
-    path: {{ settings_file }}
+    path: "{{ settings_file }}"
     regexp: '^SECRET_KEY ='
     line: "SECRET_KEY = '{{ django_secret_key }}'"
 #  when: git_result.changed
 
 - name: Add mysql config file
-  template: src=my.cnf.j2 dest={{ source_folder }}/house_finder/my.cnf
+  template: src=my.cnf.j2 dest="{{ source_folder }}/house_finder/my.cnf"
   become: true
   notify:
       - restart nginx
@@ -87,8 +81,8 @@ vars:
 
 - name: Create virtualenv and install pip requirements
   pip:
-    requirements: {{ source_folder }}/requirements.txt
-    virtualenv: {{ virtualenv_folder }}
+    requirements: "{{ source_folder }}/requirements.txt"
+    virtualenv: "{{ virtualenv_folder }}"
     virtualenv_python: python3
 
 - include: mysql.yml
@@ -96,15 +90,15 @@ vars:
 - name: Update database
   django_manage:
     command: migrate
-    app_path: {{ source_folder }}/house_finder
-    virtualenv: {{ virtualenv_folder }}
+    app_path: "{{ source_folder }}/house_finder"
+    virtualenv: "{{ virtualenv_folder }}"
 
 - name: Enter basic data in database
   django_manage:
     command: loaddata
-    app_path: {{ source_folder }}/house_finder
-    virtualenv: {{ virtualenv_folder }}
-    fixture: houses/fixture/base_data.json
+    app_path: "{{ source_folder }}/house_finder"
+    virtualenv: "{{ virtualenv_folder }}"
+    fixtures: houses/fixture/base_data.json
 
 - name: Cron scrapy job
   cron:

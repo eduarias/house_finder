@@ -1,0 +1,7 @@
+---
+home_folder: /home/{{ django_user }}/sites
+host_folder: "{{ home_folder }}/{{ inventory_hostname }}"
+source_folder: "{{ host_folder }}/source"
+virtualenv_folder: "{{ host_folder }}/virtualenv"
+logs_folder: "{{ host_folder }}/logs"
+settings_file: "{{ source_folder }}/house_finder/house_finder/settings.py"
