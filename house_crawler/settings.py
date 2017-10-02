@@ -9,6 +9,8 @@
 #
 import os
 import sys
+import django
+
 
 BOT_NAME = 'house_crawler'
 
@@ -25,8 +27,9 @@ ROBOTSTXT_OBEY = True
 ITEM_PIPELINES = {'house_crawler.pipelines.DjangoPipeline': 100,
                   }
 
-# LOG_STDOUT = True
-# LOG_FILE = '/tmp/scrapy_output.txt'
+LOG_STDOUT = True
+LOG_ENABLED = True
+LOG_FILE = '/tmp/scrapy_output.txt'
 
 PWD = os.path.dirname(__file__)
 DJANGO_PROJECT_PATH = os.path.join(PWD, '..', 'house_finder')
@@ -34,5 +37,4 @@ DJANGO_SETTINGS_MODULE = 'house_finder.settings'
 
 sys.path.insert(0, DJANGO_PROJECT_PATH)
 os.environ['DJANGO_SETTINGS_MODULE'] = DJANGO_SETTINGS_MODULE
-import django
 django.setup()
