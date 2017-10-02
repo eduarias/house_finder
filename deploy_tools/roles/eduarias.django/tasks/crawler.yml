@@ -1,0 +1,15 @@
+---
+- name: Cron scrapy job
+  cron:
+    name: "scrapy"
+    minute: "0"
+    hour: "3,15"
+    job: "{{ virtualenv_folder }}/bin/python {{ source_folder }}/home_crawler.py"
+  when: "'live' in stage"
+  become: true
+
+- name: Update settings, secret key
+  lineinfile:
+    path: "{{ source_folder }}/house_crawler/settings.py"
+    regexp: '^LOG_FILE ='
+    line: "LOG_FILE = '{{ logs_folder }}'"
