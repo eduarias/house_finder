@@ -6,7 +6,7 @@ from .models import House
 class HouseTable(tables.Table):
     title = tables.LinkColumn('houses:detail', args=[A('pk')])
     url = tables.TemplateColumn('<a href="{{ record.url }}">{{ record.provider }}</a>',
-                                order_by=('start_url.provider.name'))
+                                order_by='start_url.provider.name')
     neighborhood = tables.Column('neighborhood', A('start_url.neighborhood'))
 
     class Meta:
