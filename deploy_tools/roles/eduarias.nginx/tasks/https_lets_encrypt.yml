@@ -1,0 +1,14 @@
+---
+- name: Add Certbot repository
+  apt_repository:
+    repo: 'ppa:certbot/certbot'
+  become: true
+
+- name: Install Certbot
+  apt:
+    update_cache: yes
+    name:
+     - software-properties-common
+     - python-certbot-nginx
+    state: present
+  become: true

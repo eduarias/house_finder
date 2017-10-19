@@ -30,3 +30,5 @@
   become: true
   notify:
       - restart nginx
+
+- include: https_lets_encrypt.yml
