@@ -100,11 +100,4 @@
     virtualenv: "{{ virtualenv_folder }}"
     fixtures: houses/fixture/base_data.json
 
-- name: Cron scrapy job
-  cron:
-    name: "scrapy"
-    minute: "0"
-    hour: "3,15"
-    job: "{{ virtualenv_folder }}/bin/python {{ source_folder }}/home_crawler.py"
-  when: "'live' in stage"
-  become: true
+- include: crawler.yml
