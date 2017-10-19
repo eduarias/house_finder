@@ -2,3 +2,4 @@
 git_branch: develop
 database_name: houses_staging
 database_host: "{{ groups['database'][0] }}"
+nginx_letsencrypt_admin_email: eduarias@gmail.com
