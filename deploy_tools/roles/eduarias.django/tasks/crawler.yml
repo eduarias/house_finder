@@ -4,7 +4,7 @@
     name: "scrapy"
     minute: "0"
     hour: "3,15"
-    job: "{{ virtualenv_folder }}/bin/python {{ source_folder }}/home_crawler.py"
+    job: "cd {{ source_folder }} && {{ virtualenv_folder }}/bin/python {{ source_folder }}/home_crawler.py"
   when: "'live' in stage"
   become: true
 
@@ -12,4 +12,4 @@
   lineinfile:
     path: "{{ source_folder }}/house_crawler/settings.py"
     regexp: '^LOG_FILE ='
-    line: "LOG_FILE = '{{ logs_folder }}'"
+    line: "LOG_FILE = '{{ logs_folder }}/scrapy.log'"
