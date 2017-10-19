@@ -12,3 +12,20 @@
      - python-certbot-nginx
     state: present
   become: true
+
+- name: Check if certificate already exists
+  stat:
+    path: "/etc/letsencrypt/live/{{ inventory_hostname }}"
+  register: domain_folder
+
+- name: Create certificate if necessary
+  shell: certbot -n --nginx -m {{ nginx_letsencrypt_admin_email }} --agree-tos --domains {{ inventory_hostname }} --redirect
+  when: not domain_folder.stat.exists
+
+- name: Autorenew certificates
+  cron:
+    name: "certbot"
+    minute: "0"
+    hour: "4"
+    job: "/usr/bin/certbot renew --quiet"
+  become: true
