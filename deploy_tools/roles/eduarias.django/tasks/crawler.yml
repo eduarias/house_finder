@@ -5,8 +5,8 @@
     minute: "0"
     hour: "3,15"
     job: "cd {{ source_folder }} && {{ virtualenv_folder }}/bin/python {{ source_folder }}/home_crawler.py"
+    user: "{{ django_user }}"
   when: "'live' in stage"
-  become: true
 
 - name: Update settings, secret key
   lineinfile:
