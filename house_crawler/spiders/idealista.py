@@ -17,13 +17,13 @@ class IdealistaSpider(BaseSpider):
     provider = 'idealista'
 
     def parse_house(self, response):
+        baths_xpath = '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]/text()'
+        baths = clean_int(self.extract_from_xpath(response, baths_xpath))
 
-        baths = clean_int(self.extract_from_xpath(response,
-                                                  '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]/text()'))
-
+        toilets_xpath = \
+            '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "aseo")]/text()'
         try:
-            toilets = clean_int(self.extract_from_xpath(response,
-                                                        '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "aseo")]/text()'))
+            toilets = clean_int(self.extract_from_xpath(response, toilets_xpath))
         except IndexError:
             toilets = 0
 
@@ -33,9 +33,8 @@ class IdealistaSpider(BaseSpider):
         house = {'site_id': list(filter(None, response.url.split('/')))[-1],
                  'title': response.xpath("//h1/span/text()").extract_first(),
                  'start_url': response.meta['start_url'],
-                 'description': response.
-                     xpath('//section[@id="details"]//div[@class="adCommentsLanguage expandable"]/text()').
-                     extract_first(),
+                 'description': response.xpath(
+                     '//section[@id="details"]//div[@class="adCommentsLanguage expandable"]/text()').extract_first(),
                  'article_update_date': response.xpath("//section[@id='stats']/p/text()").extract_first(),
                  'url': response.url,
                  'price': response.xpath('//p[@class="price"]/text()').extract_first(),
