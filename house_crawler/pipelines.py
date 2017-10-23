@@ -36,7 +36,7 @@ class HouseBasePipeline(object):
                 item[element] = item[element].strip()
 
         # Fix #15 - Max size for title is 200, so to avoid errors truncate to 195
-        if len(item['title']) > 195:
+        if item['title'] and len(item['title']) > 195:
             item['title'] = item['title'][:195] + ' ...'
 
         return self.post_process_item(item, spider)
