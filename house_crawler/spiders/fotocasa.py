@@ -19,7 +19,7 @@ class FotocasaSpider(BaseSpider):
     def parse_house(self, response):
 
         house = {'site_id': clean_int(self.extract_from_xpath(response, '//div[@id="detailReference"]/text()')),
-                'title': response.xpath('//h1[@class="property-title"]/text()').extract_first().strip(),
+                'title': response.xpath('//h1[@class="property-title"]/text()').extract_first(),
                 'start_url': response.meta['start_url'],
                 'description': response.xpath('//div[@class="detail-section-content"]/p/text()').extract_first(),
                 'url': response.url,

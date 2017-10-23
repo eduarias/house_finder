@@ -27,8 +27,10 @@ class HouseBasePipeline(object):
     def process_item(self, item, spider):
         clean_int_list = ['price', 'sqft_m2', 'rooms', 'baths']
         clean_str_list = ['title', 'description', 'address']
+
         for element in clean_int_list:
             item[element] = clean_int(item[element])
+
         for element in clean_str_list:
             if item[element]:
                 item[element] = item[element].strip()
@@ -36,10 +38,6 @@ class HouseBasePipeline(object):
         # Fix #15 - Max size for title is 200, so to avoid errors truncate to 195
         if len(item['title']) > 195:
             item['title'] = item['title'][:195] + ' ...'
-
-        # Fix #14: Strip from description only necessary if there is a description
-        if item['description']:
-            item['description'] = item['description'].strip()
 
         return self.post_process_item(item, spider)
 
