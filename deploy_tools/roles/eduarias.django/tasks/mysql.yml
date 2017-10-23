@@ -2,6 +2,8 @@
 - name: Create Django MySQL database
   mysql_db:
     name: "{{ database_name }}"
+    collation: utf8_unicode_ci
+    encoding: utf8
     state: present
 
 - name: Create Django MySQL user
