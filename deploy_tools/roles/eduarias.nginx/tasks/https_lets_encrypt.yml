@@ -20,7 +20,7 @@
 
 - name: Create certificate if necessary
   shell: certbot -n --nginx -m {{ nginx_letsencrypt_admin_email }} --agree-tos --domains {{ inventory_hostname }} --redirect
-  when: not domain_folder.stat.exists
+  # when: not domain_folder.stat.exists
 
 - name: Autorenew certificates
   cron:
