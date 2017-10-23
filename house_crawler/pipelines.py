@@ -37,6 +37,10 @@ class HouseBasePipeline(object):
         if len(item['title']) > 195:
             item['title'] = item['title'][:195] + ' ...'
 
+        # Fix #14: Strip from description only necessary if there is a description
+        if item['description']:
+            item['description'] = item['description'].strip()
+
         return self.post_process_item(item, spider)
 
     @abstractmethod
