@@ -7,6 +7,12 @@ from abc import abstractmethod
 
 
 def clean_int(text):
+    """
+    From a text remove everything that is not a number
+    :param text: Input text
+    :return: An integer with all number characters from text
+    :rtype: int or None
+    """
     if text:
         if isinstance(text, str):
             number = re.sub("[^0-9]", "", text)
@@ -34,7 +40,7 @@ class HouseBasePipeline(object):
             if item[element]:
                 item[element] = item[element].strip()
 
-        # Fix #15 - Max size for title is 200, so to avoid errors truncate to 195
+        # Fix #15 - Max size for title is House.TITLE_MAX_LENGTH, so to avoid errors truncate title if longest
         max_length = House.TITLE_MAX_LENGTH - 5
         if item['title'] and len(item['title']) > max_length:
             item['title'] = item['title'][:max_length] + ' ...'
