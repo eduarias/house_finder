@@ -18,8 +18,9 @@ SPIDER_MODULES = ['house_crawler.spiders']
 NEWSPIDER_MODULE = 'house_crawler.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'home_crawler (example@example.net)'
-USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36"
+# USER_AGENT = 'home_crawler (example@example.net)'
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) " \
+             "Chrome/59.0.3071.115 Safari/537.36"
 HTTPCACHE_ENABLED = False
 AUTOTHROTTLE_ENABLED = True
 ROBOTSTXT_OBEY = True

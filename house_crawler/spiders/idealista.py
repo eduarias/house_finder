@@ -17,7 +17,8 @@ class IdealistaSpider(BaseSpider):
     provider = 'idealista'
 
     def parse_house(self, response):
-        baths_xpath = '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]/text()'
+        baths_xpath = '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]' \
+                      '/text()'
         baths = clean_int(self.extract_from_xpath(response, baths_xpath))
 
         toilets_xpath = \
