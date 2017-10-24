@@ -17,7 +17,8 @@ class HabitacliaSpider(BaseSpider):
     provider = 'habitaclia'
 
     def parse_house(self, response):
-        info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature"]/strong/text()'
+        info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/' \
+                     'li[@class="feature"]/strong/text() '
 
         try:
             address = self.extract_from_xpath(response, "//div[@id='addressPromo']/ul/li/text()")
