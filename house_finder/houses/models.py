@@ -1,6 +1,4 @@
-import datetime
 from django.db import models
-from django.utils import timezone
 
 
 class HousesProvider(models.Model):
@@ -21,8 +19,11 @@ class StartURL(models.Model):
 
 
 class House(models.Model):
+
+    TITLE_MAX_LENGTH = 200
+
     site_id = models.CharField(max_length=100)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=TITLE_MAX_LENGTH)
     description = models.TextField(default=None)
     price = models.IntegerField(null=True)
     url = models.URLField(unique=True)
