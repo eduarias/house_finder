@@ -1,4 +1,6 @@
+import urllib.parse
 from abc import abstractmethod
+import logging
 
 from scrapy.spiders import CrawlSpider
 from scrapy.http import Request
@@ -24,17 +26,20 @@ class BaseSpider(CrawlSpider):
         """
 
         houses = response.xpath(self.xpath_list)
-        start_url = response.meta.get('start_url', None)
+        start_url = self.get_start_url_from_meta(response)
 
         for house in houses.xpath(self.xpath_list_item):
             url = house.xpath(self.xpath_list_item_href).extract_first()
             house_url = self.get_url(response, url)
+            house_url = urllib.parse.quote(house_url, safe=':/')
 
             if not self.is_url_in_db(house_url):
+                logging.debug('Url not in database: {}'.format(house_url))
                 yield response.follow(house_url, meta={'start_url': start_url}, callback=self.parse_house)
             else:
                 price = house.xpath(self.xpath_list_item_price).extract_first()
                 self.update_house(house_url, price)
+
         next_page = response.xpath(self.xpath_list_next).extract_first()
         if next_page is not None:
             yield response.follow(next_page, meta={'start_url': start_url}, callback=self.parse_houses_list)
@@ -65,5 +70,9 @@ class BaseSpider(CrawlSpider):
         _house_provider = HousesProvider.objects.get(name=self.provider)
         for start_url in StartURL.objects.filter(provider=_house_provider):
             yield Request(start_url.url, meta={'start_url': start_url}, dont_filter=True)
+
+    @staticmethod
+    def get_start_url_from_meta(response):
+        return response.meta.get('start_url', None)
 
     parse_start_url = parse_houses_list

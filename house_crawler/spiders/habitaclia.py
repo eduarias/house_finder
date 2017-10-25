@@ -17,8 +17,8 @@ class HabitacliaSpider(BaseSpider):
     provider = 'habitaclia'
 
     def parse_house(self, response):
-        info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/' \
-                     'li[@class="feature"]/strong/text() '
+        info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature" ' \
+                     'and contains(., "{}")]//text()'
 
         try:
             address = self.extract_from_xpath(response, "//div[@id='addressPromo']/ul/li/text()")
@@ -27,14 +27,14 @@ class HabitacliaSpider(BaseSpider):
 
         house = {'site_id': clean_int(response.xpath('//span[@class="detail-id"]/text()').extract_first()),
                  'title': response.xpath('//h1/text()').extract_first(),
-                 'start_url': response.meta['start_url'],
+                 'start_url': self.get_start_url_from_meta(response),
                  'description': response.xpath('//p[@id="js-detail-description"]/text()').extract_first(),
                  'url': response.url.split('?')[0],
                  'price': response.xpath("//div[@class='price']/span[@itemprop='price']/text()").extract_first(),
-                 'sqft_m2': self.extract_from_xpath(response, info_xpath, 0),
-                 'rooms': self.extract_from_xpath(response, info_xpath, 1),
+                 'sqft_m2': self.extract_from_xpath(response, info_xpath.format("m"), 1),
+                 'rooms': self.extract_from_xpath(response, info_xpath.format("hab."), 1),
                  'address': address,
-                 'baths': self.extract_from_xpath(response, info_xpath, 2),
+                 'baths': self.extract_from_xpath(response, info_xpath.format("baño"), 1),
                  }
 
         yield HouseItem(**house)
