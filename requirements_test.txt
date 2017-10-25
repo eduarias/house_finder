@@ -1,1 +1,2 @@
 flake8
+Scrapy==1.4.0
