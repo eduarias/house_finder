@@ -33,7 +33,7 @@ class IdealistaSpider(BaseSpider):
 
         house = {'site_id': list(filter(None, response.url.split('/')))[-1],
                  'title': response.xpath("//h1/span/text()").extract_first(),
-                 'start_url': response.meta['start_url'],
+                 'start_url': self.get_start_url_from_meta(response),
                  'description': response.xpath(
                      '//section[@id="details"]//div[@class="adCommentsLanguage expandable"]/text()').extract_first(),
                  'article_update_date': response.xpath("//section[@id='stats']/p/text()").extract_first(),
