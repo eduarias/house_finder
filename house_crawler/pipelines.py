@@ -6,6 +6,7 @@ from django.db import IntegrityError
 from django.utils import timezone
 
 from houses.models import House
+from scrapy.exceptions import DropItem
 
 
 def clean_int(text):
@@ -38,7 +39,7 @@ class HouseBasePipeline(object):
         :type item: Item or dict
         :param spider: The spider which scraped the item
         :type spider: Spider
-        :return: Item or dict
+        :return: HouseItem
         """
         clean_int_list = ['price', 'sqft_m2', 'rooms', 'baths']
         clean_str_list = ['title', 'description', 'address']
@@ -62,8 +63,10 @@ class HouseBasePipeline(object):
         """
         Specific tasks for process_item done by a pipeline
         :param item: Item to be saved
+        :type item: HouseItem
         :param spider: Spider
-        :return: Item or dict
+        :type spider: Spider
+        :return: HouseItem
         """
         raise NotImplementedError
 
@@ -101,10 +104,12 @@ class DjangoPipeline(HouseBasePipeline):
 
     def post_process_item(self, item, spider):
         try:
+            item['updated_at'] = timezone.now()
             item.save()
             logging.debug("House added to Django database! {}".format(item['url']))
-        except IntegrityError:
-            logging.info("Url already in database: {}".format(item['url']))
+        except IntegrityError as e:
+            logging.error("Error inserting into database - url: {}\n\t{}".format(item['url'], str(e)))
+            raise DropItem
         return item
 
     def is_url_in_db(self, url):
