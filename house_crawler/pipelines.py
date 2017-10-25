@@ -1,9 +1,11 @@
-# -*- coding: utf-8 -*-
-from django.db import IntegrityError
-from houses.models import House
 import logging
 import re
 from abc import abstractmethod
+
+from django.db import IntegrityError
+from django.utils import timezone
+
+from houses.models import House
 
 
 def clean_int(text):
@@ -30,6 +32,14 @@ def clean_int(text):
 class HouseBasePipeline(object):
 
     def process_item(self, item, spider):
+        """
+        This method is called for every item pipeline component.
+        :param item: The item scraped
+        :type item: Item or dict
+        :param spider: The spider which scraped the item
+        :type spider: Spider
+        :return: Item or dict
+        """
         clean_int_list = ['price', 'sqft_m2', 'rooms', 'baths']
         clean_str_list = ['title', 'description', 'address']
 
@@ -49,17 +59,41 @@ class HouseBasePipeline(object):
 
     @abstractmethod
     def post_process_item(self, item, spider):
+        """
+        Specific tasks for process_item done by a pipeline
+        :param item: Item to be saved
+        :param spider: Spider
+        :return: Item or dict
+        """
         raise NotImplementedError
 
     def is_url_in_db(self, url):
+        """
+        Check if the URL already exists in the database.
+        :param url: URL to search for
+        :type url: str
+        :return: True if exists
+        :rtype: bool
+        """
         raise NotImplementedError
 
     def open_spider(self, spider):
+        """
+        Method called when spider is opened.
+        Set new methods required in the Spider
+        :param spider: Spider
+        """
         spider.is_url_in_db = self.is_url_in_db
-        spider.update_price = self.update_price
+        spider.update_house = self.update_house
 
     @abstractmethod
-    def update_price(self, url, price):
+    def update_house(self, url, price):
+        """
+        Update item
+        :param url: Item url
+        :param price: Current price
+        :return: None
+        """
         raise NotImplementedError
 
 
@@ -74,15 +108,15 @@ class DjangoPipeline(HouseBasePipeline):
         return item
 
     def is_url_in_db(self, url):
-        try:
-            house = House.objects.get(url=url)
-        except House.DoesNotExist:
-            house = None
-        return True if house else False
+        return House.objects.filter(url=url).exists()
 
-    def update_price(self, url, price):
+    def update_house(self, url, price):
         house = House.objects.get(url=url)
         price = clean_int(price)
-        logging.info('Url already in database: {}, updating price: {}'.format(url, price))
-        house.price = price
+        if house.price != price:
+            logging.info('Url already in database: {}, updating price: {}'.format(url, price))
+            house.price = price
+            house.updated_at = timezone.now()
+        else:
+            logging.info('Url already in database: {}, updating last view'.format(url))
         house.save()

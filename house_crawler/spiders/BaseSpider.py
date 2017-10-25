@@ -34,7 +34,7 @@ class BaseSpider(CrawlSpider):
                 yield response.follow(house_url, meta={'start_url': start_url}, callback=self.parse_house)
             else:
                 price = house.xpath(self.xpath_list_item_price).extract_first()
-                self.update_price(house_url, price)
+                self.update_house(house_url, price)
         next_page = response.xpath(self.xpath_list_next).extract_first()
         if next_page is not None:
             yield response.follow(next_page, meta={'start_url': start_url}, callback=self.parse_houses_list)

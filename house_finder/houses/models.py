@@ -37,7 +37,8 @@ class House(models.Model):
     has_seen = models.BooleanField(default=False)
     notes = models.TextField(default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=False)
+    last_view_at = models.DateTimeField(auto_now=True)
     start_url = models.ForeignKey(StartURL, null=True)
 
     def __str__(self):
