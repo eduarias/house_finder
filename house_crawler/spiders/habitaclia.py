@@ -32,7 +32,7 @@ class HabitacliaSpider(BaseSpider):
         :rtype: HouseItem
 
         Contract:
-        @url https://www.habitaclia.com/alquiler-casa-preciosa_en_bonanova_sant_gervasi_bonanova-barcelona-i3978002020033.htm
+        @url https://www.habitaclia.com/alquiler-casa-preciosa_en_bonanova_sant_gervasi_bonanova-barcelona-i3978002020033.htm  # noqa
         @returns items 1
         @returns requests 0
         @scrapes title url price rooms baths sqft_m2
