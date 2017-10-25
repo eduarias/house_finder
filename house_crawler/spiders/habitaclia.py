@@ -16,7 +16,27 @@ class HabitacliaSpider(BaseSpider):
 
     provider = 'habitaclia'
 
+    def parse_houses_list(self, response):
+        """
+        Contract:
+        @url https://www.habitaclia.com/alquiler-sant_gervasi___bonanova-barcelona-1.htm
+        @returns items 0
+        @returns requests 0
+        """
+        super(HabitacliaSpider, self).parse_houses_list(response)
+
     def parse_house(self, response):
+        """
+        Parses a house.
+        :param response: HTML response of a house item
+        :rtype: HouseItem
+
+        Contract:
+        @url https://www.habitaclia.com/alquiler-casa-preciosa_en_bonanova_sant_gervasi_bonanova-barcelona-i3978002020033.htm
+        @returns items 1
+        @returns requests 0
+        @scrapes title url price rooms baths sqft_m2
+        """
         info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature" ' \
                      'and contains(., "{}")]//text()'
 

@@ -16,7 +16,27 @@ class IdealistaSpider(BaseSpider):
 
     provider = 'idealista'
 
+    def parse_houses_list(self, response):
+        """
+        Contract:
+        @url https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/
+        @returns items 0
+        @returns requests 0
+        """
+        super(IdealistaSpider, self).parse_houses_list(response)
+
     def parse_house(self, response):
+        """
+        Parses a house.
+        :param response: HTML response of a house item
+        :rtype: HouseItem
+
+        Contract:
+        @url https://www.idealista.com/inmueble/25078492/
+        @returns items 1
+        @returns requests 0
+        @scrapes title url price rooms baths sqft_m2
+        """
         baths_xpath = '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]' \
                       '/text()'
         baths = clean_int(self.extract_from_xpath(response, baths_xpath))
