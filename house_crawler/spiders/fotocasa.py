@@ -32,7 +32,7 @@ class FotocasaSpider(BaseSpider):
         :rtype: HouseItem
 
         Contract:
-        @url https://www.fotocasa.es/vivienda/barcelona-capital/aire-acondicionado-calefaccion-terraza-ascensor-amueblado-parking-television-se-aceptan-mascotas-internet-prats-de-mollo-18-135215074?RowGrid=3&tti=3&opi=300
+        @url https://www.fotocasa.es/vivienda/barcelona-capital/aire-acondicionado-calefaccion-terraza-ascensor-amueblado-parking-television-se-aceptan-mascotas-internet-prats-de-mollo-18-135215074?RowGrid=3&tti=3&opi=300  # noqa
         @returns items 1
         @returns requests 0
         @scrapes title url price rooms baths sqft_m2
