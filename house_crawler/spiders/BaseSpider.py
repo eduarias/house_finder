@@ -1,7 +1,7 @@
 import urllib.parse
 from abc import abstractmethod
+import logging
 
-from django.utils import timezone
 from scrapy.spiders import CrawlSpider
 from scrapy.http import Request
 
@@ -34,16 +34,14 @@ class BaseSpider(CrawlSpider):
             house_url = urllib.parse.quote(house_url, safe=':/')
 
             if not self.is_url_in_db(house_url):
-                self.logger.debug('Url not in database: {}'.format(house_url))
+                logging.debug('Url not in database: {}'.format(house_url))
                 yield response.follow(house_url, meta={'start_url': start_url}, callback=self.parse_house)
             else:
                 price = house.xpath(self.xpath_list_item_price).extract_first()
-                self.update_price(house_url, price)
+                self.update_house(house_url, price)
 
-        # Follows to next page of the list
         next_page = response.xpath(self.xpath_list_next).extract_first()
         if next_page is not None:
-            self.logger.debug('Next page html component: {}'.format(next_page))
             yield response.follow(next_page, meta={'start_url': start_url}, callback=self.parse_houses_list)
 
     @abstractmethod
@@ -58,10 +56,7 @@ class BaseSpider(CrawlSpider):
         :return: A HouseItem object with the home data to be pipelined.
         :rtype: HouseItem
         """
-        return {'start_url': self.get_start_url_from_meta(response),
-                 'url': response.url,
-                 'updated_at': timezone.now(),
-                }
+        raise NotImplementedError
 
     @staticmethod
     def extract_from_xpath(response, xpath, index=0):

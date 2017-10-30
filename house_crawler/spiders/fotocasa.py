@@ -12,23 +12,43 @@ class FotocasaSpider(BaseSpider):
     xpath_list_item = './/div[@class="re-Searchresult-item"]'
     xpath_list_item_href = './/a[@class="re-Card-title"]/@href'
     xpath_list_item_price = './/span[@class="re-Card-price"]/text()'
-    xpath_list_next = '//a[@class="sui-Pagination-link" and text()=">"]/@href'
+    xpath_list_next = '//a[@class="sui-Pagination-link" and text()=">"]'
 
     provider = 'fotocasa'
 
-    def parse_house(self, response):
-        house = super(FotocasaSpider, self).parse_house(response)
+    def parse_houses_list(self, response):
+        """
+        Contract:
+        @url https://www.fotocasa.es/es/alquiler/casas/barcelona-capital/sant-gervasi-galvany/l
+        @returns items 0
+        @returns requests 0
+        """
+        super(FotocasaSpider, self).parse_houses_list(response)
 
-        house.update({'site_id': clean_int(self.extract_from_xpath(response, '//div[@id="detailReference"]/text()')),
-                      'title': response.xpath('//h1[@class="property-title"]/text()').extract_first(),
-                      'description': response.xpath('//div[@class="detail-section-content"]/p/text()').extract_first(),
-                      'price': response.xpath(
-                          '//span[@id="detail-quickaccess_property_price"]/b/text()').extract_first(),
-                      'sqft_m2': response.xpath('//*[@id="litSurface"]//text()').extract_first(),
-                      'rooms': response.xpath('//*[@id="litRooms"]//text()').extract_first(),
-                      'baths': response.xpath('//*[@id="litBaths"]//text()').extract_first(),
-                      'address': response.xpath('//div[@class="detail-section-content"]/text()').extract_first(),
-                      })
+    def parse_house(self, response):
+        """
+        Parses a house.
+        :param response: HTML response of a house item
+        :rtype: HouseItem
+
+        Contract:
+        @url https://www.fotocasa.es/vivienda/barcelona-capital/aire-acondicionado-calefaccion-terraza-ascensor-amueblado-parking-television-se-aceptan-mascotas-internet-prats-de-mollo-18-135215074?RowGrid=3&tti=3&opi=300  # noqa
+        @returns items 1
+        @returns requests 0
+        @scrapes title url price rooms baths sqft_m2
+        """
+
+        house = {'site_id': clean_int(self.extract_from_xpath(response, '//div[@id="detailReference"]/text()')),
+                 'title': response.xpath('//h1[@class="property-title"]/text()').extract_first(),
+                 'start_url': self.get_start_url_from_meta(response),
+                 'description': response.xpath('//div[@class="detail-section-content"]/p/text()').extract_first(),
+                 'url': response.url,
+                 'price': response.xpath('//span[@id="detail-quickaccess_property_price"]/b/text()').extract_first(),
+                 'sqft_m2': response.xpath('//*[@id="litSurface"]//text()').extract_first(),
+                 'rooms': response.xpath('//*[@id="litRooms"]//text()').extract_first(),
+                 'baths': response.xpath('//*[@id="litBaths"]//text()').extract_first(),
+                 'address': response.xpath('//div[@class="detail-section-content"]/text()').extract_first(),
+                 }
 
         yield HouseItem(**house)
 
