@@ -104,10 +104,11 @@ class DjangoPipeline(HouseBasePipeline):
 
     def post_process_item(self, item, spider):
         try:
+            item['updated_at'] = timezone.now()
             item.save()
-            spider.logger.debug("House added to Django database! {}".format(item['url']))
+            logging.debug("House added to Django database! {}".format(item['url']))
         except IntegrityError as e:
-            spider.logger.error("Error inserting into database - url: {}\n\t{}".format(item['url'], str(e)))
+            logging.error("Error inserting into database - url: {}\n\t{}".format(item['url'], str(e)))
             raise DropItem
         return item
 
