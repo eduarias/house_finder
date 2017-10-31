@@ -48,7 +48,6 @@ class BaseSpider(CrawlSpider):
     def get_url(self, response, url):
         raise NotImplementedError
 
-    @abstractmethod
     def parse_house(self, response):
         """
         Parse the house
@@ -56,7 +55,12 @@ class BaseSpider(CrawlSpider):
         :return: A HouseItem object with the home data to be pipelined.
         :rtype: HouseItem
         """
-        raise NotImplementedError
+        house = {
+            'url': response.url,
+            'start_url': self.get_start_url_from_meta(response),
+        }
+
+        return house
 
     @staticmethod
     def extract_from_xpath(response, xpath, index=0):
