@@ -24,6 +24,7 @@ deploy_staging:
     - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
     - cd deploy_tools
     - echo ${ANSIBLE_VAULT_SECRET} > .vault_password.txt
+    - ssh root@houses-staging.ariasmonche.es ps -eaf
 
   script:
     - pip install ansible
