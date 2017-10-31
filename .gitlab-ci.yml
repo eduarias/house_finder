@@ -16,6 +16,7 @@ deploy_staging:
   stage: deploy
   script:
     - pip install ansible
+    - mkdir -p /root/.ssh
     - echo ${SSH_PRIVATE_KEY} > /root/.ssh/id_rsa
     - cd deploy_tools
     - echo ${ANSIBLE_VAULT_SECRET} > .vault_password.txt
