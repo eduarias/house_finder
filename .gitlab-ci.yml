@@ -19,6 +19,7 @@ deploy_staging:
     - mkdir -p /root/.ssh
     - echo ${SSH_PRIVATE_KEY} > /root/.ssh/id_rsa
     - cat /root/.ssh/id_rsa
+    - chmod 700 /root/.ssh/id_rsa
     - cd deploy_tools
     - echo ${ANSIBLE_VAULT_SECRET} > .vault_password.txt
     - ansible-playbook playbook.yml -i hosts/staging/inventory --vault-password-file .vault_password.txt
