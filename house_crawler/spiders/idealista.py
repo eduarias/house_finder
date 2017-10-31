@@ -12,9 +12,14 @@ class IdealistaSpider(BaseSpider):
     xpath_list_item = './/div[@class="item-info-container"]'
     xpath_list_item_href = './/a[@class="item-link "]/@href'
     xpath_list_item_price = './/span[@class="item-price"]/text()'
-    xpath_list_next = "//a[@class='icon-arrow-right-after']"
+    xpath_list_next = "//a[@class='icon-arrow-right-after']/@href"
 
     provider = 'idealista'
+
+    # Custom Xpath
+    baths_xpath = '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]/text()'
+    toilets_xpath = \
+        '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "aseo")]/text()'
 
     def parse_houses_list(self, response):
         """
@@ -23,7 +28,7 @@ class IdealistaSpider(BaseSpider):
         @returns items 0
         @returns requests 0
         """
-        super(IdealistaSpider, self).parse_houses_list(response)
+        return super(IdealistaSpider, self).parse_houses_list(response)
 
     def parse_house(self, response):
         """
@@ -37,33 +42,30 @@ class IdealistaSpider(BaseSpider):
         @returns requests 0
         @scrapes title url price rooms baths sqft_m2
         """
-        baths_xpath = '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "baño")]' \
-                      '/text()'
-        baths = clean_int(self.extract_from_xpath(response, baths_xpath))
+        house = super(IdealistaSpider, self).parse_house(response)
 
-        toilets_xpath = \
-            '//h2[text()="Características básicas"]/following-sibling::ul/li[contains(text(), "aseo")]/text()'
+        baths = clean_int(self.extract_from_xpath(response, self.baths_xpath))
+
         try:
-            toilets = clean_int(self.extract_from_xpath(response, toilets_xpath))
+            toilets = clean_int(self.extract_from_xpath(response, self.toilets_xpath))
         except IndexError:
             toilets = 0
 
         if toilets:
             baths += toilets
 
-        house = {'site_id': list(filter(None, response.url.split('/')))[-1],
-                 'title': response.xpath("//h1/span/text()").extract_first(),
-                 'start_url': self.get_start_url_from_meta(response),
-                 'description': response.xpath(
-                     '//section[@id="details"]//div[@class="adCommentsLanguage expandable"]/text()').extract_first(),
-                 'article_update_date': response.xpath("//section[@id='stats']/p/text()").extract_first(),
-                 'url': response.url,
-                 'price': response.xpath('//p[@class="price"]/text()').extract_first(),
-                 'sqft_m2': response.xpath('//div[@class="info-data"]/span[2]/span/text()').extract_first(),
-                 'rooms': response.xpath('//div[@class="info-data"]/span[3]/span/text()').extract_first(),
-                 'address': None,
-                 'baths': baths,
-                 }
+        house.update({'site_id': list(filter(None, response.url.split('/')))[-1],
+                      'title': response.xpath("//h1/span/text()").extract_first(),
+                      'description': response.xpath(
+                          '//section[@id="details"]//div[@class="adCommentsLanguage expandable"]/text()').
+                     extract_first(),
+                      'article_update_date': response.xpath("//section[@id='stats']/p/text()").extract_first(),
+                      'price': response.xpath('//p[@class="price"]/text()').extract_first(),
+                      'sqft_m2': response.xpath('//div[@class="info-data"]/span[2]/span/text()').extract_first(),
+                      'rooms': response.xpath('//div[@class="info-data"]/span[3]/span/text()').extract_first(),
+                      'address': None,
+                      'baths': baths,
+                      })
 
         yield HouseItem(**house)
 

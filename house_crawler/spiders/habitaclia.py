@@ -16,6 +16,10 @@ class HabitacliaSpider(BaseSpider):
 
     provider = 'habitaclia'
 
+    # Custom Xpath
+    info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature" ' \
+                 'and contains(., "{}")]//text()'
+
     def parse_houses_list(self, response):
         """
         Contract:
@@ -23,7 +27,7 @@ class HabitacliaSpider(BaseSpider):
         @returns items 0
         @returns requests 0
         """
-        super(HabitacliaSpider, self).parse_houses_list(response)
+        return super(HabitacliaSpider, self).parse_houses_list(response)
 
     def parse_house(self, response):
         """
@@ -37,25 +41,22 @@ class HabitacliaSpider(BaseSpider):
         @returns requests 0
         @scrapes title url price rooms baths sqft_m2
         """
-        info_xpath = '//section[@class="summary bg-white"]//ul[@class="feature-container"]/li[@class="feature" ' \
-                     'and contains(., "{}")]//text()'
+        house = super(HabitacliaSpider, self).parse_house(response)
 
         try:
             address = self.extract_from_xpath(response, "//div[@id='addressPromo']/ul/li/text()")
         except IndexError:
             address = None
 
-        house = {'site_id': clean_int(response.xpath('//span[@class="detail-id"]/text()').extract_first()),
-                 'title': response.xpath('//h1/text()').extract_first(),
-                 'start_url': self.get_start_url_from_meta(response),
-                 'description': response.xpath('//p[@id="js-detail-description"]/text()').extract_first(),
-                 'url': response.url.split('?')[0],
-                 'price': response.xpath("//div[@class='price']/span[@itemprop='price']/text()").extract_first(),
-                 'sqft_m2': self.extract_from_xpath(response, info_xpath.format("m"), 1),
-                 'rooms': self.extract_from_xpath(response, info_xpath.format("hab."), 1),
-                 'address': address,
-                 'baths': self.extract_from_xpath(response, info_xpath.format("baño"), 1),
-                 }
+        house.update({'site_id': clean_int(response.xpath('//span[@class="detail-id"]/text()').extract_first()),
+                      'title': response.xpath('//h1/text()').extract_first(),
+                      'description': response.xpath('//p[@id="js-detail-description"]/text()').extract_first(),
+                      'price': response.xpath("//div[@class='price']/span[@itemprop='price']/text()").extract_first(),
+                      'sqft_m2': self.extract_from_xpath(response, self.info_xpath.format("m"), 1),
+                      'rooms': self.extract_from_xpath(response, self.info_xpath.format("hab."), 1),
+                      'address': address,
+                      'baths': self.extract_from_xpath(response, self.info_xpath.format("baño"), 1),
+                      })
 
         yield HouseItem(**house)
 
