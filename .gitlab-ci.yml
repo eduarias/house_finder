@@ -1,10 +1,9 @@
-image: python:3.6
-
 stages:
   - test
   - deploy
 
 quality:
+  image: python:3.6
   stage: test
   script:
     - pip install -r requirements.txt
@@ -13,6 +12,7 @@ quality:
 #    - scrapy check
 
 deploy_staging:
+  image: ansible/ansible
   stage: deploy
   script:
     - echo "Deploy to staging server"
