@@ -27,7 +27,7 @@ class HabitacliaSpider(BaseSpider):
         @returns items 0
         @returns requests 0
         """
-        super(HabitacliaSpider, self).parse_houses_list(response)
+        return super(HabitacliaSpider, self).parse_houses_list(response)
 
     def parse_house(self, response):
         """

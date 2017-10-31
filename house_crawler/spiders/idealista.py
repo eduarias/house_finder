@@ -12,7 +12,7 @@ class IdealistaSpider(BaseSpider):
     xpath_list_item = './/div[@class="item-info-container"]'
     xpath_list_item_href = './/a[@class="item-link "]/@href'
     xpath_list_item_price = './/span[@class="item-price"]/text()'
-    xpath_list_next = "//a[@class='icon-arrow-right-after']"
+    xpath_list_next = "//a[@class='icon-arrow-right-after']/@href"
 
     provider = 'idealista'
 
@@ -28,7 +28,7 @@ class IdealistaSpider(BaseSpider):
         @returns items 0
         @returns requests 0
         """
-        super(IdealistaSpider, self).parse_houses_list(response)
+        return super(IdealistaSpider, self).parse_houses_list(response)
 
     def parse_house(self, response):
         """
