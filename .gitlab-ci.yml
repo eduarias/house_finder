@@ -12,7 +12,7 @@ quality:
 #    - scrapy check
 
 deploy_staging:
-  image: ansible/ansible
+  image: ansible/ansible:default
   stage: deploy
   script:
     - echo "Deploy to staging server"
