@@ -85,7 +85,7 @@
     virtualenv: "{{ virtualenv_folder }}"
     virtualenv_python: python3
 
-- include: mysql.yml
+- import_tasks: mysql.yml
 
 - name: Update database
   django_manage:
@@ -100,4 +100,4 @@
     virtualenv: "{{ virtualenv_folder }}"
     fixtures: houses/fixture/base_data.json
 
-- include: crawler.yml
+- import_tasks: crawler.yml

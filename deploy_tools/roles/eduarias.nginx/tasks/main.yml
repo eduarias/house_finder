@@ -31,4 +31,4 @@
   notify:
       - restart nginx
 
-- include: https_lets_encrypt.yml
+- import_tasks: https_lets_encrypt.yml
