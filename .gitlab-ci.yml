@@ -2,6 +2,7 @@ image: python:3.6
 
 stages:
   - test
+  - deploy
 
 quality:
   stage: test
