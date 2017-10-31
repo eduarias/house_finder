@@ -16,8 +16,9 @@ deploy_staging:
   stage: deploy
   script:
     - pip install ansible
+    - echo ${SSH_PRIVATE_KEY} > /root/.ssh/id_rsa
     - cd deploy_tools
-    - echo $ansible_vault_secret > .vault_password.txt
+    - echo ${ANSIBLE_VAULT_SECRET} > .vault_password.txt
     - ansible-playbook playbook.yml -i hosts/staging/inventory --vault-password-file .vault_password.txt
   environment:
     name: Staging
