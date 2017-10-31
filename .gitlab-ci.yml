@@ -11,10 +11,7 @@ quality:
     - flake8
 #    - scrapy check
 
-deploy_staging:
-  image: ansible/ansible:default
-  stage: deploy
-
+.deploy_setup: &deploy_before_scripts
   before_script:
     - mkdir ~/.ssh
     - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
@@ -24,9 +21,13 @@ deploy_staging:
     - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
     - cd deploy_tools
     - echo ${ANSIBLE_VAULT_SECRET} > .vault_password.txt
-#    - ssh root@houses-staging.ariasmonche.es uptime
-  script:
     - pip install ansible
+
+deploy_staging:
+  image: ansible/ansible:default
+  stage: deploy
+  <<: *deploy_before_scripts
+  script:
     - ansible-playbook playbook.yml -i hosts/staging/inventory --vault-password-file .vault_password.txt
   environment:
     name: Staging
@@ -37,19 +38,8 @@ deploy_staging:
 deploy_live:
   image: ansible/ansible:default
   stage: deploy
-
-  before_script:
-    - mkdir ~/.ssh
-    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
-    - eval $(ssh-agent -s)
-    - ssh-add <(echo "$SSH_PRIVATE_KEY")
-    - touch ~/.ssh/known_hosts
-    - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
-    - cd deploy_tools
-    - echo ${ANSIBLE_VAULT_SECRET} > .vault_password.txt
-#    - ssh root@houses.ariasmonche.es uptime
+  <<: *deploy_before_scripts
   script:
-    - pip install ansible
     - ansible-playbook playbook.yml -i hosts/live/inventory --vault-password-file .vault_password.txt
   environment:
     name: Live
