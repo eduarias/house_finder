@@ -10,9 +10,9 @@ class FotocasaSpider(BaseSpider):
 
     xpath_list = '//div[@class="re-Searchresult"]'
     xpath_list_item = './/div[@class="re-Searchresult-item"]'
-    xpath_list_item_href = './/a[@class="re-Card-title"]/@href'
+    xpath_list_item_href = './/a[@class="re-Card-link"]/@href'
     xpath_list_item_price = './/span[@class="re-Card-price"]/text()'
-    xpath_list_next = '//a[@class="sui-Pagination-link" and text()=">"]'
+    xpath_list_next = '//a[@class="sui-PaginationBasic-link" and text()=">"]/@href'
 
     provider = 'fotocasa'
 
@@ -23,7 +23,7 @@ class FotocasaSpider(BaseSpider):
         @returns items 0
         @returns requests 0
         """
-        super(FotocasaSpider, self).parse_houses_list(response)
+        return super(FotocasaSpider, self).parse_houses_list(response)
 
     def parse_house(self, response):
         """
@@ -52,4 +52,4 @@ class FotocasaSpider(BaseSpider):
         yield HouseItem(**house)
 
     def get_url(self, response, url):
-        return response.urljoin(url)
+        return url.split('?')[0]

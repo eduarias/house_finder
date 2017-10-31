@@ -31,7 +31,7 @@ class BaseSpider(CrawlSpider):
         for house in houses.xpath(self.xpath_list_item):
             url = house.xpath(self.xpath_list_item_href).extract_first()
             house_url = self.get_url(response, url)
-            house_url = urllib.parse.quote(house_url, safe=':/')
+            house_url = urllib.parse.quote(house_url, safe=':/?&=')
 
             if not self.is_url_in_db(house_url):
                 logging.debug('Url not in database: {}'.format(house_url))
