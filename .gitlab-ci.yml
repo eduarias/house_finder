@@ -19,7 +19,8 @@ deploy_staging:
     - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
     - eval $(ssh-agent -s)
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
-    - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts'
+    - touch ~/.ssh/known_hosts
+    - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
     - cd deploy_tools
     - echo ${ANSIBLE_VAULT_SECRET} > .vault_password.txt
 
