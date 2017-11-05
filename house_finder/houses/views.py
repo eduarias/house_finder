@@ -15,6 +15,11 @@ class HousesListView(FilterView, SingleTableView):
     filterset_class = HouseFilter
     table_class = HouseTable
 
+    def get_context_data(self, **kwargs):
+        context = super(HousesListView, self).get_context_data(**kwargs)
+        context['rent'] = House.objects.filter(start_url__type__exact='R')
+        return context
+
 
 class DetailView(generic.DetailView):
     model = House
