@@ -8,14 +8,44 @@ class HousesProvider(models.Model):
         return self.name
 
 
+class City(models.Model):
+    name = models.CharField(max_length=50)
+
+    class Meta:
+        verbose_name_plural = 'cities'
+
+    def __str__(self):
+        return self.name
+
+
+class District(models.Model):
+    name = models.CharField(max_length=150)
+    city = models.ForeignKey(City, null=False, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
+class Neighborhood(models.Model):
+    name = models.CharField(max_length=150)
+    district = models.ForeignKey(District, null=False, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
 class StartURL(models.Model):
-    city = models.CharField(max_length=100)
-    neighborhood = models.CharField(max_length=100)
+    TYPE = (('R', 'Rent'),
+            ('B', 'Buy'))
+    city = models.ForeignKey(City, null=False, on_delete=models.PROTECT)
+    district = models.ForeignKey(District, null=True, on_delete=models.SET_NULL)
+    neighborhood = models.ForeignKey(Neighborhood, null=True, on_delete=models.SET_NULL)
     provider = models.ForeignKey(HousesProvider)
+    type = models.CharField(max_length=1, choices=TYPE, default='R')
     url = models.URLField(unique=True)
 
     def __str__(self):
-        return '{0} - {1}'.format(self.provider, self.neighborhood)
+        return '{0} - {1} - {2} - {3}'.format(self.provider, self.city, self.district, self.neighborhood)
 
 
 class House(models.Model):
@@ -39,7 +69,7 @@ class House(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=False)
     last_view_at = models.DateTimeField(auto_now=True)
-    start_url = models.ForeignKey(StartURL, null=True)
+    start_url = models.ForeignKey(StartURL, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.title
