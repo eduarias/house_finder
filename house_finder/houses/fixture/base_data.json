@@ -1,1 +1,122 @@
-[{"model": "houses.housesprovider", "pk": 1, "fields": {"name": "fotocasa"}}, {"model": "houses.housesprovider", "pk": 2, "fields": {"name": "habitaclia"}}, {"model": "houses.housesprovider", "pk": 3, "fields": {"name": "idealista"}}, {"model": "houses.starturl", "pk": 1, "fields": {"city": "Barcelona", "neighborhood": "Sarri\u00e1 - Sant Gervasi", "provider": 1, "url": "http://www.fotocasa.es/es/alquiler/casas/barcelona-capital/sarria-sant-gervasi/l"}}, {"model": "houses.starturl", "pk": 2, "fields": {"city": "Barcelona", "neighborhood": "Sant Gervasi - Bonanova", "provider": 2, "url": "https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___bonanova/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm"}}, {"model": "houses.starturl", "pk": 3, "fields": {"city": "Barcelona", "neighborhood": "Sant Gervasi - Galvany", "provider": 2, "url": "https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___galvany/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm"}}, {"model": "houses.starturl", "pk": 4, "fields": {"city": "Barcelona", "neighborhood": "Sant Gervasi - Bonanova", "provider": 3, "url": "https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/"}}]
+[
+  {
+    "model": "houses.city",
+    "pk": 1,
+    "fields": {
+      "name": "Barcelona"
+    }
+  },
+  {
+    "model": "houses.district",
+    "pk": 1,
+    "fields": {
+      "name": "Sarri\u00e1 - Sant Gervasi",
+      "city": 1
+    }
+  },
+  {
+    "model": "houses.neighborhood",
+    "pk": 1,
+    "fields": {
+      "name": "Sant Gervasi - Galvany",
+      "district": 1
+    }
+  },
+  {
+    "model": "houses.neighborhood",
+    "pk": 2,
+    "fields": {
+      "name": "Putget - Farr\u00f3",
+      "district": 1
+    }
+  },
+  {
+    "model": "houses.neighborhood",
+    "pk": 3,
+    "fields": {
+      "name": "Sant Gervasi - Bonanova",
+      "district": 1
+    }
+  },
+  {
+    "model": "houses.housesprovider",
+    "pk": 1,
+    "fields": {
+      "name": "fotocasa"
+    }
+  },
+  {
+    "model": "houses.housesprovider",
+    "pk": 2,
+    "fields": {
+      "name": "habitaclia"
+    }
+  },
+  {
+    "model": "houses.housesprovider",
+    "pk": 3,
+    "fields": {
+      "name": "idealista"
+    }
+  },
+  {
+    "model": "houses.starturl",
+    "pk": 1,
+    "fields": {
+      "city": 1,
+      "district": 1,
+      "neighborhood": 1,
+      "provider": 1,
+      "type": "R",
+      "url": "https://www.fotocasa.es/es/alquiler/casas/barcelona-capital/sant-gervasi-galvany/l"
+    }
+  },
+  {
+    "model": "houses.starturl",
+    "pk": 2,
+    "fields": {
+      "city": 1,
+      "district": 1,
+      "neighborhood": 2,
+      "provider": 1,
+      "type": "R",
+      "url": "https://www.fotocasa.es/es/alquiler/casas/barcelona-capital/el-putget-i-el-farro/l"
+    }
+  },
+  {
+    "model": "houses.starturl",
+    "pk": 3,
+    "fields": {
+      "city": 1,
+      "district": 1,
+      "neighborhood": 3,
+      "provider": 2,
+      "type": "R",
+      "url": "https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___bonanova/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm"
+    }
+  },
+  {
+    "model": "houses.starturl",
+    "pk": 4,
+    "fields": {
+      "city": 1,
+      "district": 1,
+      "neighborhood": 1,
+      "provider": 2,
+      "type": "R",
+      "url": "https://www.habitaclia.com/alquiler-vivienda-en-barcelona-barrio_sant_gervasi___galvany/provincia_barcelona-barcelones-area_6-sarria_sant_gervasi/listainmuebles.htm"
+    }
+  },
+  {
+    "model": "houses.starturl",
+    "pk": 5,
+    "fields": {
+      "city": 1,
+      "district": 1,
+      "neighborhood": 3,
+      "provider": 3,
+      "type": "R",
+      "url": "https://www.idealista.com/alquiler-viviendas/barcelona/sarria-sant-gervasi/sant-gervasi-la-bonanova/"
+    }
+  }
+]
