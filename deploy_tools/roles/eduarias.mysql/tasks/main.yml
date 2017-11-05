@@ -44,3 +44,9 @@
     replace: '#bind-address'
   notify:
     - restart mysql
+
+- name: Reduce the memory needed
+  lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    line: 'innodb_buffer_pool_size = 20M'
+
