@@ -1,7 +1,7 @@
-from time import sleep
-
 from behave import given, when, then
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+
 
 URL = 'http://localhost:8000/'
 
@@ -18,4 +18,4 @@ def step_impl(context):
 
 @then('the homepage contains a table with houses')
 def step_impl(context):
-    context.browser.
+    context.browser.find_element(By.ID, 'houses-tables')
