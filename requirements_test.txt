@@ -1,1 +1,3 @@
 flake8
+behave==1.2.5
+selenium=3.7.0
