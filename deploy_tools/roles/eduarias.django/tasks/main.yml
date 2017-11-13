@@ -78,7 +78,7 @@
 
 - name: Create virtualenv and install pip requirements
   pip:
-    requirements: "{{ source_folder }}/requirements.txt"
+    requirements: "{{ source_folder }}/requirements_prod.txt"
     virtualenv: "{{ virtualenv_folder }}"
     virtualenv_python: python3
 
