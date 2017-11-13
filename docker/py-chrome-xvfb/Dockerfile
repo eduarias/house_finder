@@ -1,9 +1,5 @@
 FROM python:3.6
 
-#ADD xvfb-chrome /usr/bin/xvfb-chrome
-#RUN ln -s /usr/bin/xvfb-chrome /usr/bin/google-chrome
-#RUN ln -s /usr/bin/xvfb-chrome /usr/bin/chromium-browser
-
 RUN apt-get update && apt-get install -y xvfb unzip && \
     curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
     echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
@@ -17,13 +13,3 @@ RUN curl -SLO "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION
     echo "$CHROMEDRIVER_SHA256  chromedriver_linux64.zip" | sha256sum -c - && \
     unzip "chromedriver_linux64.zip" -d /usr/local/bin && \
     rm "chromedriver_linux64.zip"
-
-#==================
-# Xvfb + init scripts
-#==================
-ADD libs/xvfb_init /etc/init.d/xvfb
-RUN chmod a+x /etc/init.d/xvfb
-
-ADD libs/xvfb-daemon-run /usr/bin/xvfb-daemon-run
-RUN chmod a+x /usr/bin/xvfb-daemon-run
-
