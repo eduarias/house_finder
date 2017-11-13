@@ -9,7 +9,7 @@ from .filters import HouseFilter
 
 class HousesListView(FilterView, SingleTableView):
     model = House
-    template_name = 'houses/houses_list2.html'
+    template_name = 'houses/houses_list.html'
     context_object_name = 'houses'
     ordering = ['price']
     filterset_class = HouseFilter

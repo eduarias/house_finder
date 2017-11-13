@@ -1,21 +1,12 @@
-from behave import given, when, then
-from selenium import webdriver
-from selenium.webdriver.common.by import By
+from behave import when, then
 
 
-URL = 'http://localhost:8000/'
+@when('user goes to homepage')
+def homepage(context):
+    context.browser.visit(context.base_url)
 
 
-@given('user has an open browser')
-def step_impl(context):
-    context.browser = webdriver.Chrome()
-
-
-@when('opening the homepage')
-def step_impl(context):
-    context.browser.get(URL)
-
-
-@then('the homepage contains a table with houses')
-def step_impl(context):
-    context.browser.find_element(By.ID, 'houses-tables')
+@then('the homepage should contains a table with houses')
+def contains_table(context):
+    table_elements = context.browser.find_by_id('houses-tables')
+    context.test.assertEqual(1, len(table_elements))

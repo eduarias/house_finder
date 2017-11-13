@@ -4,6 +4,5 @@ Feature: Houses for rent table
   I want a table with the houses
 
   Scenario: Table contains houses from database
-    Given user has an open browser
-     When opening the homepage
-     Then the homepage contains a table with houses
+     When user goes to homepage
+     Then the homepage should contains a table with houses
