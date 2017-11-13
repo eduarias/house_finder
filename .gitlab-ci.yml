@@ -10,6 +10,7 @@ quality:
     - pip install -r requirements_test.txt
     - flake8
 #    - scrapy check
+    - cd house_finder && python manage.py behave --settings=house_finder.settings.local
 
 .deploy_setup: &deploy_before_scripts
   before_script:
