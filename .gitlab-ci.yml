@@ -6,7 +6,7 @@ quality_and_tests:
   image: python:3.6
   stage: test
   before_script:
-    - wget https://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip -P ~/.local/bin
+    - wget https://chromedriver.storage.googleapis.com/2.33/chromedriver_linux64.zip -P /usr/local/bin
 
   script:
     - pip install -r requirements.txt
