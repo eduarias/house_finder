@@ -2,18 +2,24 @@ stages:
   - test
   - deploy
 
-quality_and_tests:
+quality:
+  image: python:3.6
+  stage: test
+  before_script:
+    - pip install -r requirements_quality.txt
+  script:
+    - flake8
+
+d_tests:
   image: python:3.6
   stage: test
   before_script:
     - apt update && apt install -y firefox-esr
     - wget -q https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz -P /tmp
-    - cd /tmp && tar xvzf geckodriver-*.tar.gz
-    - mv geckodriver /usr/local/bin
+    - tar xvzf geckodriver-*.tar.gz -C /usr/local/bin/
   script:
     - pip install -r requirements.txt
     - pip install -r requirements_test.txt
-    - flake8
 #    - scrapy check
     - cd house_finder && python manage.py behave --settings=house_finder.settings.local
 
