@@ -2,9 +2,12 @@ stages:
   - test
   - deploy
 
-quality:
+quality_and_tests:
   image: python:3.6
   stage: test
+  before_script:
+    - wget https://chromedriver.storage.googleapis.com/index.html?path=2.33/ -P ~/.local/bin
+
   script:
     - pip install -r requirements.txt
     - pip install -r requirements_test.txt
