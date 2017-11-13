@@ -46,26 +46,23 @@
   notify:
     - restart gunicorn
 
-- name: Update settings, debug
-  lineinfile:
-    path: "{{ settings_file }}"
-    regexp: '^DEBUG ='
-    line: 'DEBUG = False'
-#  when: git_result.changed
-  when: "'live' in stage"
-
 - name: Update settings, allowed hosts
   lineinfile:
     path: "{{ settings_file }}"
-    regexp: '^ALLOWED_HOSTS ='
-    line: 'ALLOWED_HOSTS = ["{{ inventory_hostname }}"]'
+    line: 'ALLOWED_HOSTS += ["{{ inventory_hostname }}"]'
 #  when: git_result.changed
 
 - name: Update settings, secret key
   lineinfile:
     path: "{{ settings_file }}"
-    regexp: '^SECRET_KEY ='
     line: "SECRET_KEY = '{{ django_secret_key }}'"
+#  when: git_result.changed
+
+- name: Update wsgi settings file
+  lineinfile:
+    path: "{{ wsgi_file }}"
+    regexp: '^os.environ.setdefault("DJANGO_SETTINGS_MODULE"'
+    line: 'os.environ["DJANGO_SETTINGS_MODULE"] = "house_finder.settings.{{ stage }}"'
 #  when: git_result.changed
 
 - name: Add mysql config file
