@@ -6,4 +6,3 @@ django-crudbuilder==0.2.5
 django-tables2==1.10.0
 scrapy-djangoitem==1.1.1
 django-filter==1.0.4
-mysqlclient==1.3.12
