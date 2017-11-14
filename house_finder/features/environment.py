@@ -1,13 +1,10 @@
 from splinter.browser import Browser
-from xvfbwrapper import Xvfb
 
 
 def before_all(context):
     print("")
-    context.vdisplay = Xvfb()
-    context.vdisplay.start()
     print("> Starting the browser")
-    context.browser = Browser('chrome')
+    context.browser = Browser('firefox', headless=True)
 
 
 def after_all(context):
@@ -15,4 +12,3 @@ def after_all(context):
     print("")
     context.browser.quit()
     context.browser = None
-    context.vdisplay.stop()

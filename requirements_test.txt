@@ -2,4 +2,3 @@ behave
 behave-django==1.0.0
 splinter
 selenium
-xvfbwrapper
