@@ -4,7 +4,7 @@ stages:
   - deploy
 
 variables:
-  BDD_IMAGE_TAG: $CI_REGISTRY_IMAGE/bdd_test:$CI_COMMIT_REF_NAME
+  BDD_IMAGE_TAG: $CI_REGISTRY_IMAGE/bdd_test:$CI_COMMIT_REF_SLUG
 
 bdd_docker_build:
   stage: build
