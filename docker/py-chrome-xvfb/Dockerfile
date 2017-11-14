@@ -13,3 +13,12 @@ RUN curl -SLO "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION
     echo "$CHROMEDRIVER_SHA256  chromedriver_linux64.zip" | sha256sum -c - && \
     unzip "chromedriver_linux64.zip" -d /usr/local/bin && \
     rm "chromedriver_linux64.zip"
+
+#========================================
+# Add normal user with passwordless sudo
+#========================================
+RUN set -xe \
+    && useradd -u 1000 -g 100 -G sudo --shell /bin/bash --no-create-home --home-dir /tmp user \
+    && echo 'ALL ALL = (ALL:ALL) NOPASSWD: ALL' >> /etc/sudoers
+
+USER user
