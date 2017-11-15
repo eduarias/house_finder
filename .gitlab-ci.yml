@@ -4,18 +4,17 @@ stages:
   - deploy
 
 variables:
-  BDD_IMAGE_TAG: $CI_REGISTRY_IMAGE/bdd_test:$CI_COMMIT_REF_SLUG
+  BDD_IMAGE_TAG: $CI_REGISTRY_IMAGE/bdd_tests
 
-bdd_docker_build:
-  stage: build
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker pull $BDD_IMAGE_TAG
-    - docker build -t $BDD_IMAGE_TAG docker/ubuntu-firefox/
-    - docker push $BDD_IMAGE_TAG
+#bdd_docker_build:
+#  stage: build
+#  image: docker:latest
+#  services:
+#    - docker:dind
+#  script:
+#    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+#    - docker build -t $BDD_IMAGE_TAG docker/ubuntu-firefox/
+#    - docker push $BDD_IMAGE_TAG
 
 quality:
   image: python:3.6
