@@ -27,3 +27,9 @@ def contains_columns(context, columns):
     for column in columns:
         table_header = context.browser.find_by_id('header-{}'.format(column))
         context.test.assertEqual(1, len(table_header), msg='Column {} not found'.format(column))
+
+
+@then('there should be a filter option')
+def contains_filter(context):
+    filter_forms = context.browser.find_by_id('house-filter')
+    context.test.assertTrue(1, len(filter_forms))
