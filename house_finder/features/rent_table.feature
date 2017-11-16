@@ -8,3 +8,8 @@ Feature: Houses for rent table
      Then it should contains a table with houses
      And table contains columns: title, neighborhood, price, m2, rooms, baths, url
 
+# Add empty table
+
+# Add table with data
+
+# Add pagination

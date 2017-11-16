@@ -6,3 +6,7 @@ Feature: Filtering
   Scenario: Filter is in homepage
     When user goes to homepage
     Then there should be a filter option
+
+  # Add filtering options and examples for each one
+
+  # Add example for several filters at the same time
