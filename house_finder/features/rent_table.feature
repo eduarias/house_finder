@@ -6,3 +6,4 @@ Feature: Houses for rent table
   Scenario: Table contains houses from database
      When user goes to homepage
      Then it should contains a table with houses
+     And table contains columns: title, neighborhood, price, m2, rooms, baths, url

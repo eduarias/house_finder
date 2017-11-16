@@ -12,7 +12,7 @@ class HouseTable(tables.Table):
                                  A('start_url.neighborhood'),
                                  attrs={'th': {'id': 'header-neighborhood'}})
     price = tables.Column(accessor='price', attrs={'th': {'id': 'header-price'}})
-    sqft_m2 = tables.Column(accessor='sqft_m2', verbose_name='m2', attrs={'th': {'id': 'header-sqft_m2'}})
+    sqft_m2 = tables.Column(accessor='sqft_m2', verbose_name='m2', attrs={'th': {'id': 'header-m2'}})
     rooms = tables.Column(accessor='rooms', attrs={'th': {'id': 'header-rooms'}})
     baths = tables.Column(accessor='baths', attrs={'th': {'id': 'header-baths'}})
 
