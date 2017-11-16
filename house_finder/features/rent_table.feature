@@ -5,4 +5,4 @@ Feature: Houses for rent table
 
   Scenario: Table contains houses from database
      When user goes to homepage
-     Then the homepage should contains a table with houses
+     Then it should contains a table with houses

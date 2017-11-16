@@ -4,10 +4,17 @@ from .models import House
 
 
 class HouseTable(tables.Table):
-    title = tables.LinkColumn('houses:detail', args=[A('pk')])
+    title = tables.LinkColumn(accessor='houses:detail', args=[A('pk')], attrs={'th': {'id': 'header-title'}})
     url = tables.TemplateColumn('<a href="{{ record.url }}">{{ record.provider }}</a>',
-                                order_by='start_url.provider.name')
-    neighborhood = tables.Column('neighborhood', A('start_url.neighborhood'))
+                                order_by='start_url.provider.name',
+                                attrs={'th': {'id': 'header-url'}})
+    neighborhood = tables.Column('neighborhood',
+                                 A('start_url.neighborhood'),
+                                 attrs={'th': {'id': 'header-neighborhood'}})
+    price = tables.Column(accessor='price', attrs={'th': {'id': 'header-price'}})
+    sqft_m2 = tables.Column(accessor='sqft_m2', verbose_name='m2', attrs={'th': {'id': 'header-sqft_m2'}})
+    rooms = tables.Column(accessor='rooms', attrs={'th': {'id': 'header-rooms'}})
+    baths = tables.Column(accessor='baths', attrs={'th': {'id': 'header-baths'}})
 
     class Meta:
         model = House
