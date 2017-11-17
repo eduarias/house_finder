@@ -52,4 +52,4 @@ class FotocasaSpider(BaseSpider):
         yield HouseItem(**house)
 
     def get_url(self, response, url):
-        return url.split('?')[0]
+        return response.urljoin(url).split('?')[0]

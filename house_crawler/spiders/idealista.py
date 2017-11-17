@@ -6,7 +6,7 @@ from house_crawler.pipelines import clean_int
 class IdealistaSpider(BaseSpider):
     name = "idealista"
     allowed_domains = ["idealista.com"]
-    download_delay = 3
+    download_delay = 10
 
     xpath_list = '//div[@class="items-container"]/article'
     xpath_list_item = './/div[@class="item-info-container"]'
