@@ -23,6 +23,7 @@ quality:
     - pip install -r requirements_quality.txt
   script:
     - flake8
+  allow_failure: true
 
 bdd_tests:
   image: $BDD_IMAGE_TAG
