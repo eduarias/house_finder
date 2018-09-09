@@ -1,4 +1,4 @@
-# house_finder
+# House finder
 
 Find a house crawling real state portals.
 Currently supporting Fotocasa and Habitaclia.
