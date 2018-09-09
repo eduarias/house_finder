@@ -9,10 +9,10 @@ class FotocasaSpider(BaseSpider):
     download_delay = 3
 
     xpath_list = '//div[@class="re-Searchresult"]'
-    xpath_list_item = './/div[@class="re-Searchresult-item"]'
+    xpath_list_item = './/div[@class="re-Searchresult-itemRow"]'
     xpath_list_item_href = './/a[@class="re-Card-link"]/@href'
     xpath_list_item_price = './/span[@class="re-Card-price"]/text()'
-    xpath_list_next = '//a[@class="sui-PaginationBasic-link" and text()=">"]/@href'
+    xpath_list_next = '//a[contains(@class, "sui-PaginationBasic-link") and text()=">"]/@href'
 
     provider = 'fotocasa'
 

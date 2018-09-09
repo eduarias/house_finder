@@ -1,0 +1,6 @@
+django==1.11.3
+django-bootstrap3==9.0.0
+django-crudbuilder==0.2.5
+django-tables2==1.10.0
+django-filter==1.0.4
+psycopg2-binary==2.7.5
