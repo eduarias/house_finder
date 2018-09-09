@@ -1,7 +1,6 @@
 gunicorn==19.7.1
-Scrapy==1.4.0
-scrapy-djangoitem==1.1.1
 
 ###### Refer to other requirements files ######
 -r ./house_finder/requirements.txt
+-r ./house_crawler/requirements.txt
 #
