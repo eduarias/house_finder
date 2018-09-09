@@ -50,7 +50,7 @@ class StartURL(models.Model):
 
 class House(models.Model):
 
-    TITLE_MAX_LENGTH = 200
+    TITLE_MAX_LENGTH = 500
 
     site_id = models.CharField(max_length=100)
     title = models.CharField(max_length=TITLE_MAX_LENGTH)
