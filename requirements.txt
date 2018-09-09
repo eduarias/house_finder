@@ -1,9 +1,7 @@
 gunicorn==19.7.1
 Scrapy==1.4.0
-django==1.11.3
-django-bootstrap3==9.0.0
-django-crudbuilder==0.2.5
-django-tables2==1.10.0
 scrapy-djangoitem==1.1.1
-django-filter==1.0.4
-mysqlclient==1.3.12
+
+###### Refer to other requirements files ######
+-r ./house_finder/requirements.txt
+#
