@@ -10,9 +10,12 @@ services:
   web:
     build: ./house_finder
     command: ["./docker-entrypoint.sh"]
-    volumes:
-      - .:/code
     ports:
       - "8000:8000"
+    depends_on:
+      - db
+  crawler:
+    build: .
+    command: ["python", "home_crawler.py"]
     depends_on:
       - db

@@ -10,6 +10,9 @@ sleep 5
 echo "Apply database migrations"
 python manage.py migrate
 
+# Apply fixture base data
+python manage.py loaddata 0.0.0.0:8000
+
 # Start server
 echo "Starting server"
 python manage.py runserver 0.0.0.0:8000
