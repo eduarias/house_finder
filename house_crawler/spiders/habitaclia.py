@@ -8,11 +8,11 @@ class HabitacliaSpider(BaseSpider):
     allowed_domains = ["habitaclia.com"]
     download_delay = 0.5
 
-    xpath_list = '//ul[@class="enlista"]'
-    xpath_list_item = './/li[@data-id]'
+    xpath_list = '//section[@class="list-items"]'
+    xpath_list_item = './/div[contains(@class, "list-item-info")]'
     xpath_list_item_href = './/a[@itemprop="name"]/@href'
     xpath_list_item_price = './/span[@itemprop="price"]/text()'
-    xpath_list_next = '//a[@class="siguiente"]/@href'
+    xpath_list_next = '//li[@class="next"]/a/@href'
 
     provider = 'habitaclia'
 
