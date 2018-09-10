@@ -1,7 +1,13 @@
+"""
+A model is the single, definitive source of information about your data. It contains the essential
+fields and behaviors of the data you’re storing. Generally, each model maps to a single database
+table.
+"""
 from django.db import models
 
 
 class HousesProvider(models.Model):
+    """Real state web site to crawl"""
     name = models.CharField(max_length=25, unique=True)
 
     def __str__(self):
@@ -9,6 +15,7 @@ class HousesProvider(models.Model):
 
 
 class City(models.Model):
+    """City name"""
     name = models.CharField(max_length=50)
 
     class Meta:
@@ -19,6 +26,7 @@ class City(models.Model):
 
 
 class District(models.Model):
+    """District of a city"""
     name = models.CharField(max_length=150)
     city = models.ForeignKey(City, null=False, on_delete=models.CASCADE)
 
@@ -27,6 +35,7 @@ class District(models.Model):
 
 
 class Neighborhood(models.Model):
+    """Neighborhood of a district"""
     name = models.CharField(max_length=150)
     district = models.ForeignKey(District, null=False, on_delete=models.CASCADE)
 
@@ -35,6 +44,7 @@ class Neighborhood(models.Model):
 
 
 class StartURL(models.Model):
+    """Initial url to begin the crawling"""
     TYPE = (('R', 'Rent'),
             ('B', 'Buy'))
     city = models.ForeignKey(City, null=False, on_delete=models.PROTECT)
@@ -49,6 +59,7 @@ class StartURL(models.Model):
 
 
 class House(models.Model):
+    """House definition"""
 
     TITLE_MAX_LENGTH = 500
 
@@ -76,6 +87,11 @@ class House(models.Model):
 
     @property
     def provider(self):
+        """
+        Get the provider name
+        :return: provider name
+        :rtype: str
+        """
         if self.start_url:
             return self.start_url.provider.name.title()
         else:

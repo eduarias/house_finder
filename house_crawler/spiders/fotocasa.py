@@ -1,9 +1,11 @@
+"""Module for Fotocasa scrapping"""
 from house_crawler.items import HouseItem
 from house_crawler.spiders.BaseSpider import BaseSpider
 from house_crawler.pipelines import clean_int
 
 
 class FotocasaSpider(BaseSpider):
+    """Spider for Fotocasa"""
     name = "fotocasa"
     allowed_domains = ["fotocasa.es"]
     download_delay = 3

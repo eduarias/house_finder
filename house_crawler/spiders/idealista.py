@@ -1,9 +1,11 @@
+"""Module for Idealista scrapping"""
 from house_crawler.items import HouseItem
 from house_crawler.spiders.BaseSpider import BaseSpider
 from house_crawler.pipelines import clean_int
 
 
 class IdealistaSpider(BaseSpider):
+    """Spider for Idealista"""
     name = "idealista"
     allowed_domains = ["idealista.com"]
     download_delay = 10
