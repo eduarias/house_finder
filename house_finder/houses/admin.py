@@ -1,3 +1,6 @@
+"""
+Define models to be display in Django admin pannel.
+"""
 from django.contrib import admin
 
 from .models import House, StartURL, HousesProvider, City, District, Neighborhood
