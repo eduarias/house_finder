@@ -1,3 +1,4 @@
+""""Abstract class to crawl real state sites"""
 import urllib.parse
 from abc import abstractmethod
 import logging
@@ -71,6 +72,7 @@ class BaseSpider(CrawlSpider):
             return None
 
     def start_requests(self):
+        """Get the start urls to begin crawling"""
         _house_provider = HousesProvider.objects.get(name=self.provider)
         for start_url in StartURL.objects.filter(provider=_house_provider):
             yield Request(start_url.url, meta={'start_url': start_url}, dont_filter=True)

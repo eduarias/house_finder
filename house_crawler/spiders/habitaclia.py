@@ -1,9 +1,11 @@
+"""Module for Habitaclia scrapping"""
 from house_crawler.items import HouseItem
 from house_crawler.spiders.BaseSpider import BaseSpider
 from house_crawler.pipelines import clean_int
 
 
 class HabitacliaSpider(BaseSpider):
+    """Spider for Habitaclia"""
     name = "habitaclia"
     allowed_domains = ["habitaclia.com"]
     download_delay = 0.5

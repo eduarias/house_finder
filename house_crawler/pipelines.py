@@ -31,6 +31,7 @@ def clean_int(text):
 
 
 class HouseBasePipeline(object):
+    """Abstract class to clean, validate and save scrapped data """
 
     def process_item(self, item, spider):
         """
@@ -101,6 +102,7 @@ class HouseBasePipeline(object):
 
 
 class DjangoPipeline(HouseBasePipeline):
+    """Pipeline to use with Django ORM"""
 
     def post_process_item(self, item, spider):
         try:
