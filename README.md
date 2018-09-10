@@ -1,0 +1,2 @@
+# house_finder
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/94ae7eaaaa8a4f2cb06ddffb96a86dc0)](https://app.codacy.com/app/eduarias/house_finder?utm_source=github.com&utm_medium=referral&utm_content=eduarias/house_finder&utm_campaign=Badge_Grade_Dashboard)
