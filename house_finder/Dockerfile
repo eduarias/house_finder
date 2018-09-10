@@ -9,5 +9,9 @@ RUN pip install -r requirements.txt
 
 COPY . /house_finder
 WORKDIR /house_finder
-RUN chmod +x docker-entrypoint.sh
+RUN chmod +x docker-entrypoint.sh create_superadmin.py
+
+ENV DJANGO_SU_USERNAME admin
+ENV DJANGO_SU_EMAIL admin@example.org
+ENV DJANGO_SU_PASSWORD test1234
 
