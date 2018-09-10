@@ -1,4 +1,4 @@
-""""Abstract class to crawl real state sites"""
+""""Base spider module for real state sites"""
 import urllib.parse
 from abc import abstractmethod
 import logging
@@ -10,7 +10,7 @@ from houses.models import StartURL, HousesProvider
 
 
 class BaseSpider(CrawlSpider):
-
+    """"Abstract class to crawl real state sites"""
     xpath_list = None
     xpath_list_item = None
     xpath_list_item_href = None
@@ -47,6 +47,12 @@ class BaseSpider(CrawlSpider):
 
     @abstractmethod
     def get_url(self, response, url):
+        """Makes a clean url
+        :param response: HTTP response of a single house
+        :param url:
+        :return: An absolute url of the house clean of parameters
+        :rtype: str
+        """
         raise NotImplementedError
 
     def parse_house(self, response):
@@ -65,6 +71,14 @@ class BaseSpider(CrawlSpider):
 
     @staticmethod
     def extract_from_xpath(response, xpath, index=0):
+        """
+        Extract values from an xpath
+        :param response: HTTP response of a single house
+        :param xpath: Xpath used to get the data
+        :param index: Index of the vale
+        :return: Value
+        :rtype: str
+        """
         values = response.xpath(xpath).extract()
         try:
             return values[index]
@@ -79,6 +93,13 @@ class BaseSpider(CrawlSpider):
 
     @staticmethod
     def get_start_url_from_meta(response):
+        """
+        In order to set data related to the start url like the city and neighborhood
+        there is needed the original start_url, this data is stored in the
+        metadata.
+        :param response: HTTP response of a single house
+        :return: The start url where the spider started crawling
+        """
         return response.meta.get('start_url', None)
 
     parse_start_url = parse_houses_list

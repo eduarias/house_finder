@@ -1,3 +1,4 @@
+"""Items definition"""
 from scrapy_djangoitem import DjangoItem
 from houses.models import House
 
