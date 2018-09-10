@@ -14,6 +14,10 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    environment:
+      - DJANGO_SU_USERNAME="admin"
+      - DJANGO_SU_EMAIL="eduarias@users.noreply.github.com"
+      - DJANGO_SU_PASSWORD="test"
   crawler:
     build: .
     command: ["python", "home_crawler.py"]

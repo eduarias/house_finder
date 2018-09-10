@@ -10,8 +10,13 @@ sleep 5
 echo "Apply database migrations"
 python manage.py migrate
 
+# Create Django superuser
+echo "Create Django superadmin"
+python create_superadmin.py
+
 # Apply fixture base data
-python manage.py loaddata 0.0.0.0:8000
+echo "Load Django fixture"
+python manage.py loaddata houses/fixture/base_data.json
 
 # Start server
 echo "Starting server"
