@@ -24,6 +24,7 @@ class HousesListView(FilterView, SingleTableView):
     table_class = HouseTable
 
     def get_context_data(self, **kwargs):
+        """Filter the base data to be shown"""
         context = super(HousesListView, self).get_context_data(**kwargs)
         context['rent'] = House.objects.filter(start_url__type__exact='R')
         return context
